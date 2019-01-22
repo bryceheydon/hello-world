@@ -35,7 +35,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "AzureBlob1",
+						"referenceName": "SourceDataset_8cg",
 						"type": "DatasetReference"
 					}
 				],
