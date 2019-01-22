@@ -405,7 +405,7 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "AzureBlob1",
+								"referenceName": "SourceDataset_8cg",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -422,7 +422,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/AzureBlob1')]",
+				"[concat(variables('factoryId'), '/datasets/SourceDataset_8cg')]",
 				"[concat(variables('factoryId'), '/datasets/DestinationDataset_8cg')]"
 			]
 		},
