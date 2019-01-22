@@ -1,0 +1,63 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "brhdatafactory"
+		},
+		"AzureBlobStorage1_connectionString": {
+			"value": ""
+		},
+		"AzureBlobStorage2_connectionString": {
+			"value": ""
+		},
+		"AzureDataLakeStore1_servicePrincipalKey": {
+			"value": ""
+		},
+		"AzureSqlDW1_connectionString": {
+			"value": ""
+		},
+		"AzureSqlDW2_connectionString": {
+			"value": ""
+		},
+		"AzureSqlDWfake_connectionString": {
+			"value": ""
+		},
+		"AzureSqlDatabase1_connectionString": {
+			"value": ""
+		},
+		"AzureBlob1_properties_typeProperties_fileName": {
+			"value": ""
+		},
+		"AzureBlob1_properties_typeProperties_folderPath": {
+			"value": "brhcontainer"
+		},
+		"DestinationDataset_8cg_properties_typeProperties_fileName": {
+			"value": ""
+		},
+		"DestinationDataset_8cg_properties_typeProperties_folderPath": {
+			"value": ""
+		},
+		"SourceDataset_8cg_properties_typeProperties_fileName": {
+			"value": ""
+		},
+		"SourceDataset_8cg_properties_typeProperties_folderPath": {
+			"value": "brhcontainer"
+		},
+		"AzureDataLakeStore1_properties_typeProperties_dataLakeStoreUri": {
+			"value": "https://brhdl.azuredatalakestore.net/webhdfs/v1"
+		},
+		"AzureDataLakeStore1_properties_typeProperties_servicePrincipalId": {
+			"value": "14275d49-4fc3-40af-b80d-002c39718509"
+		},
+		"AzureDataLakeStore1_properties_typeProperties_tenant": {
+			"value": "72f988bf-86f1-41af-91ab-2d7cd011db47"
+		},
+		"AzureDataLakeStore1_properties_typeProperties_subscriptionId": {
+			"value": "2e43985a-872d-4274-a0d6-89f0fd056a42"
+		},
+		"AzureDataLakeStore1_properties_typeProperties_resourceGroupName": {
+			"value": "brhprac"
+		}
+	}
+}

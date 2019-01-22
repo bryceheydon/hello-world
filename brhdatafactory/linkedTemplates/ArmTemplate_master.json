@@ -1,0 +1,168 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory Name",
+			"defaultValue": "brhdatafactory"
+		},
+		"AzureBlobStorage1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1'"
+		},
+		"AzureBlobStorage2_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage2'"
+		},
+		"AzureDataLakeStore1_servicePrincipalKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalKey' of 'AzureDataLakeStore1'"
+		},
+		"AzureSqlDW1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDW1'"
+		},
+		"AzureSqlDW2_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDW2'"
+		},
+		"AzureSqlDWfake_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDWfake'"
+		},
+		"AzureSqlDatabase1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
+		},
+		"AzureBlob1_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": ""
+		},
+		"AzureBlob1_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "brhcontainer"
+		},
+		"DestinationDataset_8cg_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": ""
+		},
+		"DestinationDataset_8cg_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": ""
+		},
+		"SourceDataset_8cg_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": ""
+		},
+		"SourceDataset_8cg_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "brhcontainer"
+		},
+		"AzureDataLakeStore1_properties_typeProperties_dataLakeStoreUri": {
+			"type": "string",
+			"defaultValue": "https://brhdl.azuredatalakestore.net/webhdfs/v1"
+		},
+		"AzureDataLakeStore1_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "14275d49-4fc3-40af-b80d-002c39718509"
+		},
+		"AzureDataLakeStore1_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "72f988bf-86f1-41af-91ab-2d7cd011db47"
+		},
+		"AzureDataLakeStore1_properties_typeProperties_subscriptionId": {
+			"type": "string",
+			"defaultValue": "2e43985a-872d-4274-a0d6-89f0fd056a42"
+		},
+		"AzureDataLakeStore1_properties_typeProperties_resourceGroupName": {
+			"type": "string",
+			"defaultValue": "brhprac"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas Token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AzureBlobStorage1_connectionString": {
+						"value": "[parameters('AzureBlobStorage1_connectionString')]"
+					},
+					"AzureBlobStorage2_connectionString": {
+						"value": "[parameters('AzureBlobStorage2_connectionString')]"
+					},
+					"AzureDataLakeStore1_servicePrincipalKey": {
+						"value": "[parameters('AzureDataLakeStore1_servicePrincipalKey')]"
+					},
+					"AzureSqlDW1_connectionString": {
+						"value": "[parameters('AzureSqlDW1_connectionString')]"
+					},
+					"AzureSqlDW2_connectionString": {
+						"value": "[parameters('AzureSqlDW2_connectionString')]"
+					},
+					"AzureSqlDWfake_connectionString": {
+						"value": "[parameters('AzureSqlDWfake_connectionString')]"
+					},
+					"AzureSqlDatabase1_connectionString": {
+						"value": "[parameters('AzureSqlDatabase1_connectionString')]"
+					},
+					"AzureDataLakeStore1_properties_typeProperties_dataLakeStoreUri": {
+						"value": "[parameters('AzureDataLakeStore1_properties_typeProperties_dataLakeStoreUri')]"
+					},
+					"AzureDataLakeStore1_properties_typeProperties_servicePrincipalId": {
+						"value": "[parameters('AzureDataLakeStore1_properties_typeProperties_servicePrincipalId')]"
+					},
+					"AzureDataLakeStore1_properties_typeProperties_tenant": {
+						"value": "[parameters('AzureDataLakeStore1_properties_typeProperties_tenant')]"
+					},
+					"AzureDataLakeStore1_properties_typeProperties_subscriptionId": {
+						"value": "[parameters('AzureDataLakeStore1_properties_typeProperties_subscriptionId')]"
+					},
+					"AzureDataLakeStore1_properties_typeProperties_resourceGroupName": {
+						"value": "[parameters('AzureDataLakeStore1_properties_typeProperties_resourceGroupName')]"
+					},
+					"AzureBlob1_properties_typeProperties_fileName": {
+						"value": "[parameters('AzureBlob1_properties_typeProperties_fileName')]"
+					},
+					"AzureBlob1_properties_typeProperties_folderPath": {
+						"value": "[parameters('AzureBlob1_properties_typeProperties_folderPath')]"
+					},
+					"DestinationDataset_8cg_properties_typeProperties_fileName": {
+						"value": "[parameters('DestinationDataset_8cg_properties_typeProperties_fileName')]"
+					},
+					"DestinationDataset_8cg_properties_typeProperties_folderPath": {
+						"value": "[parameters('DestinationDataset_8cg_properties_typeProperties_folderPath')]"
+					},
+					"SourceDataset_8cg_properties_typeProperties_fileName": {
+						"value": "[parameters('SourceDataset_8cg_properties_typeProperties_fileName')]"
+					},
+					"SourceDataset_8cg_properties_typeProperties_folderPath": {
+						"value": "[parameters('SourceDataset_8cg_properties_typeProperties_folderPath')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
