@@ -1,0 +1,18 @@
+{
+    "Microsoft.DataFactory/factories/pipelines": {},
+    "Microsoft.DataFactory/factories/integrationRuntimes": {},
+    "Microsoft.DataFactory/factories/triggers": {},
+    "Microsoft.DataFactory/factories/linkedServices": {
+        "*": {
+            "properties": {
+                "typeProperties": {
+                    "dataLakeStoreUri": "=",
+                    "servicePrincipalId": "=",
+                    "servicePrincipalKey": "=",
+                    "accessToken": "-"
+                }
+            }
+        }
+    },
+    "Microsoft.DataFactory/factories/datasets": {}
+}
