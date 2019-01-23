@@ -9,7 +9,7 @@
                     "dataLakeStoreUri": "=",
                     "servicePrincipalId": "=",
                     "servicePrincipalKey": "=",
-                    "accessToken": "-"
+                    "accessToken": "="
                 }
             }
         }
