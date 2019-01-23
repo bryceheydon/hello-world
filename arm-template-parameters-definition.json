@@ -8,7 +8,7 @@
                 "typeProperties": {
                     "dataLakeStoreUri": "=",
                     "servicePrincipalId": "=",
-                    "servicePrincipalKey": "|",
+                    "servicePrincipalKey": "-",
                     "accessToken": "="
                 }
             }
