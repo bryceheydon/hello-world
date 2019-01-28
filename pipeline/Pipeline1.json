@@ -1,0 +1,32 @@
+{
+	"name": "Pipeline1",
+	"properties": {
+		"description": "Simple demonstration of an issue with the datafactory to sql sproc interface. If ADF could pass a null value correctly to SQL the activity would fail with the error message \"Test Passed!!\". Instead it passed a ' ' as the parameter value which results in a \"Test Failed\" error message.",
+		"activities": [
+			{
+				"name": "ThrowError",
+				"type": "SqlServerStoredProcedure",
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"storedProcedureName": "testSPROC",
+					"storedProcedureParameters": {
+						"TestParam": {
+							"value": null,
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "linkedService1",
+					"type": "LinkedServiceReference"
+				}
+			}
+		]
+	}
+}
