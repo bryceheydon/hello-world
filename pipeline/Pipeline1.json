@@ -14,7 +14,7 @@
 					"secureInput": false
 				},
 				"typeProperties": {
-					"storedProcedureName": "testSPROC",
+					"storedProcedureName": "[dbo].[sp_ADFTestNullParam]",
 					"storedProcedureParameters": {
 						"TestParam": {
 							"value": null,
