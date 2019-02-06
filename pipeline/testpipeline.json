@@ -14,24 +14,25 @@
 				},
 				"typeProperties": {
 					"source": {
-						"type": "AzureDataLakeStoreSource",
+						"type": "BlobSource",
 						"recursive": true
 					},
 					"sink": {
-						"type": "BlobSink"
+						"type": "SqlSink",
+						"writeBatchSize": 10000
 					},
 					"enableStaging": false,
 					"dataIntegrationUnits": 0
 				},
 				"inputs": [
 					{
-						"referenceName": "AzureDataLakeStoreFile1",
+						"referenceName": "AzureBlob1",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "AzureBlob1",
+						"referenceName": "AzureSqlTable2",
 						"type": "DatasetReference"
 					}
 				]

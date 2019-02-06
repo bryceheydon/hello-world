@@ -1,0 +1,23 @@
+{
+	"name": "AzureSqlTable2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "brhsqldb",
+			"type": "LinkedServiceReference"
+		},
+		"type": "AzureSqlTable",
+		"structure": [
+			{
+				"name": "StringData",
+				"type": "String"
+			},
+			{
+				"name": "NumericData",
+				"type": "Int32"
+			}
+		],
+		"typeProperties": {
+			"tableName": "[dbo].[ADFNullTest]"
+		}
+	}
+}
