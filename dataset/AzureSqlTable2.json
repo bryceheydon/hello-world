@@ -2,7 +2,7 @@
 	"name": "AzureSqlTable2",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "brhsqldb",
+			"referenceName": "brhSqlDatabase2",
 			"type": "LinkedServiceReference"
 		},
 		"type": "AzureSqlTable",
@@ -19,5 +19,6 @@
 		"typeProperties": {
 			"tableName": "[dbo].[ADFNullTest]"
 		}
-	}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
 }
