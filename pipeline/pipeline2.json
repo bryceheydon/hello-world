@@ -42,7 +42,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "brhAzureBlob1",
+						"referenceName": "AzureBlob1",
 						"type": "DatasetReference"
 					}
 				],
