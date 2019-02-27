@@ -28,8 +28,7 @@
 						"recursive": true
 					},
 					"sink": {
-						"type": "SqlSink",
-						"writeBatchSize": 10000
+						"type": "AzureDataLakeStoreSink"
 					},
 					"enableStaging": false,
 					"translator": {
@@ -42,13 +41,13 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "brhAzureBlob1",
+						"referenceName": "AzureBlob1",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "AzureSqlTable2",
+						"referenceName": "DestinationDataset_8cg",
 						"type": "DatasetReference"
 					}
 				]
