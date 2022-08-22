@@ -1,0 +1,7 @@
+{
+	"name": "SHIR-HA",
+	"properties": {
+		"type": "SelfHosted",
+		"description": "High availability self-hosted integration runtime to be shared"
+	}
+}

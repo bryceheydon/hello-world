@@ -1,0 +1,9 @@
+{
+	"name": "brhquicksupportfilesadf",
+	"location": "westus2",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "98307936-7c9a-4731-bc6e-826cbfd9145b",
+		"tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47"
+	}
+}

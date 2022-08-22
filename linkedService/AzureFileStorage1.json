@@ -1,0 +1,13 @@
+{
+	"name": "AzureFileStorage1",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureFileStorage",
+		"typeProperties": {
+			"sasUri": "https://brhazurefilestorage.file.core.windows.net/",
+			"fileShare": "brhfilesharetest",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDhEMkY1RUEyLUNFRTgtNERENC05NzIzLTAyM0RCRkI1RjFGNV82ZDM1NGZlOS0xNWEyLTRlNWQtOTM3ZS0yMTc3YzEwNWVhYTIiDQp9"
+		}
+	}
+}
