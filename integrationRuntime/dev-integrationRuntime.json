@@ -1,0 +1,17 @@
+{
+	"name": "dev-integrationRuntime",
+	"properties": {
+		"type": "Managed",
+		"typeProperties": {
+			"computeProperties": {
+				"location": "Central US",
+				"dataFlowProperties": {
+					"computeType": "MemoryOptimized",
+					"coreCount": 272,
+					"timeToLive": 10,
+					"cleanup": false
+				}
+			}
+		}
+	}
+}

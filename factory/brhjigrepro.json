@@ -1,0 +1,9 @@
+{
+	"name": "brhjigrepro",
+	"location": "eastus2",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "0d773b8f-30c2-4012-b830-0163f9d72a7f",
+		"tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47"
+	}
+}

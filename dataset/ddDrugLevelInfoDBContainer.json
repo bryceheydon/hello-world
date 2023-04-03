@@ -1,0 +1,16 @@
+{
+	"name": "ddDrugLevelInfoDBContainer",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "vcenterCosmosDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "CosmosDbSqlApiCollection",
+		"schema": {},
+		"typeProperties": {
+			"collectionName": "dropdown-druglevelinfo"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

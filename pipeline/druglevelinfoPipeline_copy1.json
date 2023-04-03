@@ -1,0 +1,191 @@
+{
+	"name": "druglevelinfoPipeline_copy1",
+	"properties": {
+		"activities": [
+			{
+				"name": "DataFlowDruglevelinfo",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "druglevelinfoClearIf",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "druglevelinfoDataFlow",
+						"type": "DataFlowReference",
+						"parameters": {
+							"filename": {
+								"value": "'@{pipeline().parameters.druglevelinfoFileName}'",
+								"type": "Expression"
+							},
+							"clientname": {
+								"value": "'@{variables('druglevelinfoClientName')}'",
+								"type": "Expression"
+							},
+							"filecreationdate": {
+								"value": "'@{variables('druglevelinfoFileCreationDate')}'",
+								"type": "Expression"
+							},
+							"runid": {
+								"value": "'@{pipeline().RunId}'",
+								"type": "Expression"
+							}
+						}
+					},
+					"integrationRuntime": {
+						"referenceName": "dev-integrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "setDruglevelinfoFileCreationDate",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "druglevelinfoFileCreationDate",
+					"value": {
+						"value": "@trim(split(pipeline().parameters.druglevelinfoFileName,'_')[0])",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "setDruglevelinfoClientName",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "setDruglevelinfoFileCreationDate",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "druglevelinfoClientName",
+					"value": {
+						"value": "@trim(split(pipeline().parameters.druglevelinfoFileName,'_')[1])",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "druglevelinfoRowCountLookup",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "setDruglevelinfoClientName",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "CosmosDbSqlApiSource",
+						"query": {
+							"value": "@concat('select c.ClientName from c where c.ClientName = ', '''', variables('druglevelinfoClientName'), '''')",
+							"type": "Expression"
+						},
+						"preferredRegions": [],
+						"detectDatetime": true
+					},
+					"dataset": {
+						"referenceName": "ddDrugLevelInfoDBContainer",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "druglevelinfoClearIf",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "druglevelinfoRowCountLookup",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@contains(activity('druglevelinfoRowCountLookup').output, 'firstRow')",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "DataFlowClearDruglevelinfo",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "1.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "druglevelinfoClearDataFlow",
+									"type": "DataFlowReference",
+									"parameters": {
+										"clientname": {
+											"value": "'@{variables('druglevelinfoClientName')}'",
+											"type": "Expression"
+										}
+									}
+								},
+								"integrationRuntime": {
+									"referenceName": "dev-integrationRuntime",
+									"type": "IntegrationRuntimeReference"
+								},
+								"traceLevel": "Fine"
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"druglevelinfoFileName": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"druglevelinfoClientName": {
+				"type": "String"
+			},
+			"druglevelinfoFileCreationDate": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-12-15T05:57:39Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

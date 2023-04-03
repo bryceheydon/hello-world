@@ -1,0 +1,132 @@
+{
+	"name": "druglevelinfoDataFlow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "druglevelinfoCSV",
+						"type": "DatasetReference"
+					},
+					"name": "druglevelinfoSource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "druglevelinfoDBContainer",
+						"type": "DatasetReference"
+					},
+					"name": "druglevelinfoSink"
+				},
+				{
+					"dataset": {
+						"referenceName": "ddDrugLevelInfoDBContainer_copy1",
+						"type": "DatasetReference"
+					},
+					"name": "dropdownSink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "distinctYear"
+				},
+				{
+					"name": "yearTypeColumn"
+				},
+				{
+					"name": "yearDropdownSelect"
+				},
+				{
+					"name": "distinctPOS"
+				},
+				{
+					"name": "posTypeColumn"
+				},
+				{
+					"name": "posDropdownSelect"
+				},
+				{
+					"name": "distinctUnivFilterOne"
+				},
+				{
+					"name": "univFilterOneTypeColumn"
+				},
+				{
+					"name": "univFilterOneDropdownSelect"
+				},
+				{
+					"name": "distinctUnivFilterOneDesc"
+				},
+				{
+					"name": "univFilterOneDescTypeColumn"
+				},
+				{
+					"name": "univFilterOneDescDropdownSelect"
+				},
+				{
+					"name": "distinctUnivFilterTwo"
+				},
+				{
+					"name": "univFilterTwoTypeColumn"
+				},
+				{
+					"name": "univFilterTwoDropdownSelect"
+				},
+				{
+					"name": "distinctUnivFilterTwoDesc"
+				},
+				{
+					"name": "univFilterTwoDescTypeColumn"
+				},
+				{
+					"name": "univFilterTwoDescDropdownSelect"
+				},
+				{
+					"name": "distinctUnivFilterThree"
+				},
+				{
+					"name": "univFilterThreeTypeColumn"
+				},
+				{
+					"name": "univFilterThreeDropdownSelect"
+				},
+				{
+					"name": "distinctUnivFilterThreeDesc"
+				},
+				{
+					"name": "univFilterThreeDescTypeColumn"
+				},
+				{
+					"name": "univFilterThreeDescDropdownSelect"
+				},
+				{
+					"name": "distinctDrugClass"
+				},
+				{
+					"name": "drugClassTypeColumn"
+				},
+				{
+					"name": "drugClassDropdownSelect"
+				},
+				{
+					"name": "distinctDrugName"
+				},
+				{
+					"name": "drugNameTypeColumn"
+				},
+				{
+					"name": "drugNameDropdownSelect"
+				},
+				{
+					"name": "dropdownUnion"
+				},
+				{
+					"name": "FileCreationDateDerivedColumn"
+				}
+			],
+			"script": "parameters{\n\tfilename as string,\n\tclientname as string,\n\tfilecreationdate as string,\n\trunid as string\n}\nsource(output(\n\t\tMembership as double,\n\t\tmembership_B as double,\n\t\tBUSINESS_LINE_CODE as string,\n\t\tCUST_SEG_NBR as string,\n\t\tTable as string,\n\t\tPOS as string,\n\t\tDrug_Class as string,\n\t\tDrug_Name as string,\n\t\tYear as integer,\n\t\tMonth as string,\n\t\tUNIV_FILTER_1 as integer,\n\t\tUNIV_FILTER_1_DESC as string,\n\t\tUNIV_FILTER_2 as integer,\n\t\tUNIV_FILTER_2_DESC as string,\n\t\tUNIV_FILTER_3 as integer,\n\t\tUNIV_FILTER_3_DESC as string,\n\t\tMembers as integer,\n\t\tMembers_B as integer,\n\t\tUnits as double,\n\t\tUnits_B as double,\n\t\tClaims as integer,\n\t\tClaims_B as integer,\n\t\tTotal_Cost as double,\n\t\tTotal_cost_B as double,\n\t\tMember_Paid as double,\n\t\tMember_Paid_B as double,\n\t\tpl_paid as double,\n\t\tpl_paid_B as double,\n\t\t{Member Share} as double,\n\t\tMember_Share_B as double,\n\t\t{Total Cost PMPM} as double,\n\t\tTotal_Cost_PMPM_B as double,\n\t\t{Plan Paid PMPM} as double,\n\t\tPlan_Paid_PMPM_B as double,\n\t\t{Member Paid PMPM} as double,\n\t\tMember_Paid_PMPM_B as double,\n\t\t{Monthly UltizationPMPY} as double,\n\t\tMonthly_UltizationPMPY_B as double,\n\t\t{Total Cost/Claim} as double,\n\t\tTotal_Cost_Claim_B as double,\n\t\t{Total Cost/Unit} as double,\n\t\tTotal_Cost_Unit_B as double,\n\t\t{Units /Claim} as double,\n\t\tUnit_Claim_B as double,\n\t\t{Total Cost PMPM Trend} as double,\n\t\tTotal_Cost_PMPM_Trend_B as double,\n\t\t{Plan Paid PMPM Trend} as double,\n\t\tPlan_Paid_PMPM_Trend_B as double,\n\t\t{Utilization PMPY Trend} as double,\n\t\tUtilization_PMPY_Trend_B as double,\n\t\t{Percent Total Cost} as double,\n\t\tPercent_Total_Cost_B as double,\n\t\t{Percent Total Claims} as double,\n\t\tPercent_Total_Claims_B as double,\n\t\tRank_Cost as double,\n\t\tRank_Cost_B as double,\n\t\tRank_Claims as double,\n\t\tRank_Claims_B as double,\n\t\tInd as string,\n\t\t{Percent Total Cost Spend} as double,\n\t\tPercent_Total_Cost_Spend_B as double,\n\t\t{Percent Total Claims Spend} as double,\n\t\tPercent_Total_Claims_Spend_B as double,\n\t\tPercent_Total_Cost_SOC as double,\n\t\tPercent_Total_Cost_SOC_B as double,\n\t\tPercent_Total_Claims_SOC as double,\n\t\tPercent_Total_Claims_SOC_B as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\twildcardPaths:[($filename)]) ~> druglevelinfoSource\ndruglevelinfoSource aggregate(groupBy(Year),\n\teach(match(name!='Year'), $$ = first($$))) ~> distinctYear\ndistinctYear derive(DropdownType = 'YEAR',\n\t\tYear = toString(Year),\n\t\tDropdownDesc = toString(Year),\n\t\tClientName = $clientname,\n\t\tInsertSid = $filename,\n\t\tRunId = $runid) ~> yearTypeColumn\nyearTypeColumn select(mapColumn(\n\t\tDropdownValue = Year,\n\t\tDropdownType,\n\t\tDropdownDesc,\n\t\tClientName,\n\t\tInsertSid,\n\t\tRunId\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> yearDropdownSelect\ndruglevelinfoSource aggregate(groupBy(POS),\n\teach(match(name!='POS'), $$ = first($$))) ~> distinctPOS\ndistinctPOS derive(DropdownType = 'POS',\n\t\tDropdownDesc = POS,\n\t\tClientName = $clientname,\n\t\tInsertSid = $filename,\n\t\tRunId = $runid) ~> posTypeColumn\nposTypeColumn select(mapColumn(\n\t\tDropdownValue = POS,\n\t\tDropdownType,\n\t\tDropdownDesc,\n\t\tClientName,\n\t\tInsertSid,\n\t\tRunId\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> posDropdownSelect\ndruglevelinfoSource aggregate(groupBy(UNIV_FILTER_1),\n\teach(match(name!='UNIV_FILTER_1'), $$ = first($$))) ~> distinctUnivFilterOne\ndistinctUnivFilterOne derive(DropdownType = 'UNIVFILTERONE',\n\t\tUNIV_FILTER_1 = toString(UNIV_FILTER_1),\n\t\tDropdownDesc = UNIV_FILTER_1_DESC,\n\t\tClientName = $clientname,\n\t\tInsertSid = $filename,\n\t\tRunId = $runid) ~> univFilterOneTypeColumn\nunivFilterOneTypeColumn select(mapColumn(\n\t\tDropdownValue = UNIV_FILTER_1,\n\t\tDropdownType,\n\t\tDropdownDesc,\n\t\tClientName,\n\t\tInsertSid,\n\t\tRunId\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> univFilterOneDropdownSelect\ndruglevelinfoSource aggregate(groupBy(UNIV_FILTER_1_DESC),\n\teach(match(name!='UNIV_FILTER_1_DESC'), $$ = first($$))) ~> distinctUnivFilterOneDesc\ndistinctUnivFilterOneDesc derive(DropdownType = 'UNIVFILTERONEDESC',\n\t\tDropdownDesc = UNIV_FILTER_1_DESC,\n\t\tClientName = $clientname,\n\t\tInsertSid = $filename,\n\t\tRunId = $runid) ~> univFilterOneDescTypeColumn\nunivFilterOneDescTypeColumn select(mapColumn(\n\t\tDropdownValue = UNIV_FILTER_1_DESC,\n\t\tDropdownType,\n\t\tDropdownDesc,\n\t\tClientName,\n\t\tInsertSid,\n\t\tRunId\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> univFilterOneDescDropdownSelect\ndruglevelinfoSource aggregate(groupBy(UNIV_FILTER_2),\n\teach(match(name!='UNIV_FILTER_2'), $$ = first($$))) ~> distinctUnivFilterTwo\ndistinctUnivFilterTwo derive(DropdownType = 'UNIVFILTERTWO',\n\t\tUNIV_FILTER_2 = toString(UNIV_FILTER_2),\n\t\tDropdownDesc = UNIV_FILTER_2_DESC,\n\t\tClientName = $clientname,\n\t\tInsertSid = $filename,\n\t\tRunId = $runid) ~> univFilterTwoTypeColumn\nunivFilterTwoTypeColumn select(mapColumn(\n\t\tDropdownValue = UNIV_FILTER_2,\n\t\tDropdownType,\n\t\tDropdownDesc,\n\t\tClientName,\n\t\tInsertSid,\n\t\tRunId\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> univFilterTwoDropdownSelect\ndruglevelinfoSource aggregate(groupBy(UNIV_FILTER_2_DESC),\n\teach(match(name!='UNIV_FILTER_2_DESC'), $$ = first($$))) ~> distinctUnivFilterTwoDesc\ndistinctUnivFilterTwoDesc derive(DropdownType = 'UNIVFILTERTWODESC',\n\t\tDropdownDesc = UNIV_FILTER_2_DESC,\n\t\tClientName = $clientname,\n\t\tInsertSid = $filename,\n\t\tRunId = $runid) ~> univFilterTwoDescTypeColumn\nunivFilterTwoDescTypeColumn select(mapColumn(\n\t\tDropdownValue = UNIV_FILTER_2_DESC,\n\t\tDropdownType,\n\t\tDropdownDesc,\n\t\tClientName,\n\t\tInsertSid,\n\t\tRunId\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> univFilterTwoDescDropdownSelect\ndruglevelinfoSource aggregate(groupBy(UNIV_FILTER_3),\n\teach(match(name!='UNIV_FILTER_3'), $$ = first($$))) ~> distinctUnivFilterThree\ndistinctUnivFilterThree derive(DropdownType = 'UNIVFILTERTHREE',\n\t\tUNIV_FILTER_3 = toString(UNIV_FILTER_3),\n\t\tDropdownDesc = UNIV_FILTER_3_DESC,\n\t\tClientName = $clientname,\n\t\tInsertSid = $filename,\n\t\tRunId = $runid) ~> univFilterThreeTypeColumn\nunivFilterThreeTypeColumn select(mapColumn(\n\t\tDropdownValue = UNIV_FILTER_3,\n\t\tDropdownType,\n\t\tDropdownDesc,\n\t\tClientName,\n\t\tInsertSid,\n\t\tRunId\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> univFilterThreeDropdownSelect\ndruglevelinfoSource aggregate(groupBy(UNIV_FILTER_3_DESC),\n\teach(match(name!='UNIV_FILTER_3_DESC'), $$ = first($$))) ~> distinctUnivFilterThreeDesc\ndistinctUnivFilterThreeDesc derive(DropdownType = 'UNIVFILTERTHREEDESC',\n\t\tDropdownDesc = UNIV_FILTER_3_DESC,\n\t\tClientName = $clientname,\n\t\tInsertSid = $filename,\n\t\tRunId = $runid) ~> univFilterThreeDescTypeColumn\nunivFilterThreeDescTypeColumn select(mapColumn(\n\t\tDropdownValue = UNIV_FILTER_3_DESC,\n\t\tDropdownType,\n\t\tDropdownDesc,\n\t\tClientName,\n\t\tInsertSid,\n\t\tRunId\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> univFilterThreeDescDropdownSelect\ndruglevelinfoSource aggregate(groupBy(Drug_Class),\n\teach(match(name!='Drug_Class'), $$ = first($$))) ~> distinctDrugClass\ndistinctDrugClass derive(DropdownType = 'DRUGCLASS',\n\t\tDropdownDesc = Drug_Class,\n\t\tClientName = $clientname,\n\t\tInsertSid = $filename,\n\t\tRunId = $runid) ~> drugClassTypeColumn\ndrugClassTypeColumn select(mapColumn(\n\t\tDropdownValue = Drug_Class,\n\t\tDropdownType,\n\t\tDropdownDesc,\n\t\tClientName,\n\t\tInsertSid,\n\t\tRunId\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> drugClassDropdownSelect\ndruglevelinfoSource aggregate(groupBy(Drug_Name),\n\teach(match(name!='Drug_Name'), $$ = first($$))) ~> distinctDrugName\ndistinctDrugName derive(DropdownType = 'DRUGNAME',\n\t\tDropdownDesc = Drug_Name,\n\t\tClientName = $clientname,\n\t\tInsertSid = $filename,\n\t\tRunId = $runid) ~> drugNameTypeColumn\ndrugNameTypeColumn select(mapColumn(\n\t\tDropdownValue = Drug_Name,\n\t\tDropdownType,\n\t\tDropdownDesc,\n\t\tClientName,\n\t\tInsertSid,\n\t\tRunId\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> drugNameDropdownSelect\ndrugNameDropdownSelect, drugClassDropdownSelect, univFilterThreeDescDropdownSelect, univFilterThreeDropdownSelect, univFilterTwoDescDropdownSelect, univFilterTwoDropdownSelect, univFilterOneDescDropdownSelect, univFilterOneDropdownSelect, posDropdownSelect, yearDropdownSelect union(byName: true)~> dropdownUnion\ndruglevelinfoSource derive(FileCreationDate = $filecreationdate,\n\t\tMonth = trim(Month),\n\t\tClientName = $clientname,\n\t\tInsertSid = $filename,\n\t\tRunId = $runid) ~> FileCreationDateDerivedColumn\nFileCreationDateDerivedColumn sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'document',\n\tpartitionKey: ['/id'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\tMembership,\n\t\tMembershipB = membership_B,\n\t\tBusinessLineCode = BUSINESS_LINE_CODE,\n\t\tCustomerSegmentNumber = CUST_SEG_NBR,\n\t\tTable,\n\t\tPOS,\n\t\tDrugClass = Drug_Class,\n\t\tDrugName = Drug_Name,\n\t\tYear,\n\t\tMonth,\n\t\tUniversalFilterOne = UNIV_FILTER_1,\n\t\tUniversalFilterOneDescription = UNIV_FILTER_1_DESC,\n\t\tUniversalFilterTwo = UNIV_FILTER_2,\n\t\tUniversalFilterTwoDescription = UNIV_FILTER_2_DESC,\n\t\tUniversalFilterThree = UNIV_FILTER_3,\n\t\tUniversalFilterThreeDescription = UNIV_FILTER_3_DESC,\n\t\tMembers,\n\t\tMembersB = Members_B,\n\t\tUnits,\n\t\tUnitsB = Units_B,\n\t\tClaims,\n\t\tClaimsB = Claims_B,\n\t\tTotalCost = Total_Cost,\n\t\tTotalCostB = Total_cost_B,\n\t\tMemberPaid = Member_Paid,\n\t\tMemberPaidB = Member_Paid_B,\n\t\tPlanPaid = pl_paid,\n\t\tPlanPaidB = pl_paid_B,\n\t\tMemberShare = {Member Share},\n\t\tMemberShareB = Member_Share_B,\n\t\tTotalCostPMPM = {Total Cost PMPM},\n\t\tTotalCostPMPMB = Total_Cost_PMPM_B,\n\t\tPlanPaidPMPM = {Plan Paid PMPM},\n\t\tPlanPaidPMPMB = Plan_Paid_PMPM_B,\n\t\tMemberPaidPMPM = {Member Paid PMPM},\n\t\tMemberPaidPMPMB = Member_Paid_PMPM_B,\n\t\tMonthlyUltizationPMPY = {Monthly UltizationPMPY},\n\t\tMonthlyUltizationPMPYB = Monthly_UltizationPMPY_B,\n\t\tTotalCostPerClaim = {Total Cost/Claim},\n\t\tTotalCostPerClaimB = Total_Cost_Claim_B,\n\t\tTotalCostPerUnit = {Total Cost/Unit},\n\t\tTotalCostPerUnitB = Total_Cost_Unit_B,\n\t\tUnitsPerClaim = {Units /Claim},\n\t\tUnitClaimB = Unit_Claim_B,\n\t\tTotalCostPMPMTrend = {Total Cost PMPM Trend},\n\t\tTotalCostPMPMTrendB = Total_Cost_PMPM_Trend_B,\n\t\tPlanPaidPMPMTrend = {Plan Paid PMPM Trend},\n\t\tPlanPaidPMPMTrendB = Plan_Paid_PMPM_Trend_B,\n\t\tUtilizationPMPYTrend = {Utilization PMPY Trend},\n\t\tUtilizationPMPYTrendB = Utilization_PMPY_Trend_B,\n\t\tPercentTotalCost = {Percent Total Cost},\n\t\tPercentTotalCostB = Percent_Total_Cost_B,\n\t\tPercentTotalClaims = {Percent Total Claims},\n\t\tPercentTotalClaimsB = Percent_Total_Claims_B,\n\t\tRankCost = Rank_Cost,\n\t\tRankCostB = Rank_Cost_B,\n\t\tRankClaims = Rank_Claims,\n\t\tRankClaimsB = Rank_Claims_B,\n\t\tInd,\n\t\tFileCreationDate,\n\t\tPercentTotalCostSpend = {Percent Total Cost Spend},\n\t\tPercentTotalCostSpendB = Percent_Total_Cost_Spend_B,\n\t\tPercentTotalClaimsSpend = {Percent Total Claims Spend},\n\t\tPercentTotalClaimsSpendB = Percent_Total_Claims_Spend_B,\n\t\tPercentTotalCostSOC = Percent_Total_Cost_SOC,\n\t\tPercentTotalCostSOCB = Percent_Total_Cost_SOC_B,\n\t\tPercentTotalClaimsSOC = Percent_Total_Claims_SOC,\n\t\tPercentTotalClaimsSOCB = Percent_Total_Claims_SOC_B,\n\t\tClientName,\n\t\tInsertSid,\n\t\tRunId\n\t)) ~> druglevelinfoSink\ndropdownUnion sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'document',\n\tpartitionKey: ['/id'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> dropdownSink"
+		}
+	}
+}

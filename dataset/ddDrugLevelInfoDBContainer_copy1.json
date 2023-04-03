@@ -1,0 +1,16 @@
+{
+	"name": "ddDrugLevelInfoDBContainer_copy1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "vcenterCosmosDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "CosmosDbSqlApiCollection",
+		"schema": {},
+		"typeProperties": {
+			"collectionName": "5000row"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

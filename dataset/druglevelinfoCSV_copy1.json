@@ -1,0 +1,260 @@
+{
+	"name": "druglevelinfoCSV_copy1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "vcenterBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "druglevelinfofiles"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Membership",
+				"type": "String"
+			},
+			{
+				"name": "membership_B",
+				"type": "String"
+			},
+			{
+				"name": "BUSINESS_LINE_CODE",
+				"type": "String"
+			},
+			{
+				"name": "CUST_SEG_NBR",
+				"type": "String"
+			},
+			{
+				"name": "Table",
+				"type": "String"
+			},
+			{
+				"name": "POS",
+				"type": "String"
+			},
+			{
+				"name": "Drug_Class",
+				"type": "String"
+			},
+			{
+				"name": "Drug_Name",
+				"type": "String"
+			},
+			{
+				"name": "Year",
+				"type": "String"
+			},
+			{
+				"name": "Month",
+				"type": "String"
+			},
+			{
+				"name": "UNIV_FILTER_1",
+				"type": "String"
+			},
+			{
+				"name": "UNIV_FILTER_1_DESC",
+				"type": "String"
+			},
+			{
+				"name": "UNIV_FILTER_2",
+				"type": "String"
+			},
+			{
+				"name": "UNIV_FILTER_2_DESC",
+				"type": "String"
+			},
+			{
+				"name": "UNIV_FILTER_3",
+				"type": "String"
+			},
+			{
+				"name": "UNIV_FILTER_3_DESC",
+				"type": "String"
+			},
+			{
+				"name": "Members",
+				"type": "String"
+			},
+			{
+				"name": "Members_B",
+				"type": "String"
+			},
+			{
+				"name": "Units",
+				"type": "String"
+			},
+			{
+				"name": "Units_B",
+				"type": "String"
+			},
+			{
+				"name": "Claims",
+				"type": "String"
+			},
+			{
+				"name": "Claims_B",
+				"type": "String"
+			},
+			{
+				"name": "Total_Cost",
+				"type": "String"
+			},
+			{
+				"name": "Total_cost_B",
+				"type": "String"
+			},
+			{
+				"name": "Member_Paid",
+				"type": "String"
+			},
+			{
+				"name": "Member_Paid_B",
+				"type": "String"
+			},
+			{
+				"name": "pl_paid",
+				"type": "String"
+			},
+			{
+				"name": "pl_paid_B",
+				"type": "String"
+			},
+			{
+				"name": "Member Share",
+				"type": "String"
+			},
+			{
+				"name": "Member_Share_B",
+				"type": "String"
+			},
+			{
+				"name": "Total Cost PMPM",
+				"type": "String"
+			},
+			{
+				"name": "Total_Cost_PMPM_B",
+				"type": "String"
+			},
+			{
+				"name": "Plan Paid PMPM",
+				"type": "String"
+			},
+			{
+				"name": "Plan_Paid_PMPM_B",
+				"type": "String"
+			},
+			{
+				"name": "Member Paid PMPM",
+				"type": "String"
+			},
+			{
+				"name": "Member_Paid_PMPM_B",
+				"type": "String"
+			},
+			{
+				"name": "Monthly UltizationPMPY",
+				"type": "String"
+			},
+			{
+				"name": "Monthly_UltizationPMPY_B",
+				"type": "String"
+			},
+			{
+				"name": "Total Cost/Claim",
+				"type": "String"
+			},
+			{
+				"name": "Total_Cost_Claim_B",
+				"type": "String"
+			},
+			{
+				"name": "Total Cost/Unit",
+				"type": "String"
+			},
+			{
+				"name": "Total_Cost_Unit_B",
+				"type": "String"
+			},
+			{
+				"name": "Units /Claim",
+				"type": "String"
+			},
+			{
+				"name": "Unit_Claim_B",
+				"type": "String"
+			},
+			{
+				"name": "Total Cost PMPM Trend",
+				"type": "String"
+			},
+			{
+				"name": "Total_Cost_PMPM_Trend_B",
+				"type": "String"
+			},
+			{
+				"name": "Plan Paid PMPM Trend",
+				"type": "String"
+			},
+			{
+				"name": "Plan_Paid_PMPM_Trend_B",
+				"type": "String"
+			},
+			{
+				"name": "Utilization PMPY Trend",
+				"type": "String"
+			},
+			{
+				"name": "Utilization_PMPY_Trend_B",
+				"type": "String"
+			},
+			{
+				"name": "Percent Total Cost",
+				"type": "String"
+			},
+			{
+				"name": "Percent_Total_Cost_B",
+				"type": "String"
+			},
+			{
+				"name": "Percent Total Claims",
+				"type": "String"
+			},
+			{
+				"name": "Percent_Total_Claims_B",
+				"type": "String"
+			},
+			{
+				"name": "Rank_Cost",
+				"type": "String"
+			},
+			{
+				"name": "Rank_Cost_B",
+				"type": "String"
+			},
+			{
+				"name": "Rank_Claims",
+				"type": "String"
+			},
+			{
+				"name": "Rank_Claims_B",
+				"type": "String"
+			},
+			{
+				"name": "Ind",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

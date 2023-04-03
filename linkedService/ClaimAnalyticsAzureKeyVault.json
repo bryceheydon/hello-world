@@ -1,0 +1,11 @@
+{
+	"name": "ClaimAnalyticsAzureKeyVault",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://osfe-dev-us-c-key.vault.azure.net/"
+		}
+	}
+}

@@ -1,0 +1,53 @@
+{
+	"name": "druglevelinfoPipeline_copy2",
+	"properties": {
+		"activities": [
+			{
+				"name": "DataFlowClearDruglevelinfo_copy1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "druglevelinfoClearDataFlow",
+						"type": "DataFlowReference",
+						"parameters": {
+							"clientname": {
+								"value": "'@{variables('druglevelinfoClientName')}'",
+								"type": "Expression"
+							}
+						}
+					},
+					"integrationRuntime": {
+						"referenceName": "dev-integrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"parameters": {
+			"druglevelinfoFileName": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"druglevelinfoClientName": {
+				"type": "String"
+			},
+			"druglevelinfoFileCreationDate": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-12-15T06:06:13Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

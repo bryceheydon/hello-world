@@ -1,0 +1,49 @@
+{
+	"name": "druglevelinfoClearDataFlow_copy1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "druglevelinfoDBContainer",
+						"type": "DatasetReference"
+					},
+					"name": "druglevelinfoSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "ddDrugLevelInfoDBContainer",
+						"type": "DatasetReference"
+					},
+					"name": "ddDruglevelinfoSource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ddDrugLevelInfoDBContainer_copy1",
+						"type": "DatasetReference"
+					},
+					"name": "druglevelinfoSink"
+				},
+				{
+					"dataset": {
+						"referenceName": "ddDrugLevelInfoDBContainer",
+						"type": "DatasetReference"
+					},
+					"name": "ddDruglevelinfoSink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "druglevelinfoAlterRow"
+				},
+				{
+					"name": "ddDruglevelinfoAlterRow"
+				}
+			],
+			"script": "parameters{\n\tclientname as string\n}\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tquery: (\"select c.id from c where c.ClientName = '{$clientname}'\"),\n\tformat: 'documentQuery',\n\tsystemColumns: false) ~> druglevelinfoSource\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tquery: (\"select c.id from c where c.ClientName = '{$clientname}'\"),\n\tformat: 'documentQuery',\n\tsystemColumns: false) ~> ddDruglevelinfoSource\ndruglevelinfoSource alterRow(deleteIf(true())) ~> druglevelinfoAlterRow\nddDruglevelinfoSource alterRow(deleteIf(true())) ~> ddDruglevelinfoAlterRow\ndruglevelinfoAlterRow sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:true,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'document',\n\tbatchSize: 10000,\n\tpartitionKey: ['/id'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('roundRobin', 256)) ~> druglevelinfoSink\nddDruglevelinfoAlterRow sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:true,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'document',\n\tpartitionKey: ['/id'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> ddDruglevelinfoSink"
+		}
+	}
+}
