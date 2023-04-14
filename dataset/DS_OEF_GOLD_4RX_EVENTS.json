@@ -1,0 +1,101 @@
+{
+	"name": "DS_OEF_GOLD_4RX_EVENTS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_EAAS_SQL_SERVER_CONNECTION",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "GOLD_4RX_EVENTS_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "GOLD_MEMBER_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "PART_D_RX_EFFECTIVE_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "PART_D_RX_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "PART_D_RX_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "PART_D_RX_BIN",
+				"type": "varchar"
+			},
+			{
+				"name": "PART_D_RX_PCN",
+				"type": "varchar"
+			},
+			{
+				"name": "PART_D_RX_GROUP",
+				"type": "varchar"
+			},
+			{
+				"name": "SECONDARY_DRUG_INS_FLAG",
+				"type": "varchar"
+			},
+			{
+				"name": "SECONDARY_RX_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "SECONDARY_RX_GROUP",
+				"type": "varchar"
+			},
+			{
+				"name": "SECONDARY_DRUG_BIN",
+				"type": "varchar"
+			},
+			{
+				"name": "SECONDARY_DRUG_PCN",
+				"type": "varchar"
+			},
+			{
+				"name": "UPDATED_BY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CREATED_ON",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "UPDATED_ON",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "UID",
+				"type": "uniqueidentifier"
+			},
+			{
+				"name": "APPLICATION_ID",
+				"type": "bigint",
+				"precision": 19
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "GOLD_4RX_EVENTS"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

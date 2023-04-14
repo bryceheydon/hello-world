@@ -1,0 +1,17 @@
+{
+	"name": "EAAS-ADF-IR",
+	"properties": {
+		"type": "Managed",
+		"typeProperties": {
+			"computeProperties": {
+				"location": "Central US",
+				"dataFlowProperties": {
+					"computeType": "General",
+					"coreCount": 16,
+					"timeToLive": 10,
+					"cleanup": false
+				}
+			}
+		}
+	}
+}

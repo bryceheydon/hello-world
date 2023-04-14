@@ -1,0 +1,92 @@
+{
+	"name": "DS_EAAS_TX_FILE",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_EAAS_SQL_SERVER_CONNECTION",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "FILE_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "FILE_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FILE_CONTROL_NUMBER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FILE_CREATED_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "FILE_RECEIVED_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "TOTAL_RECORDS_REPORTED",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "TOTAL_RECORDS_LOADED",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "SOURCE_SYSTEM_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "TARGET_SYSTEM_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "CLIENT_FILE_TYPE_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TOTAL_RECORDS_FAILED",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "HEADER_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TOTAL_RECORDS_REJECTED",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "INSERT_DATETIME",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "UID",
+				"type": "uniqueidentifier"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "TX_FILE"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

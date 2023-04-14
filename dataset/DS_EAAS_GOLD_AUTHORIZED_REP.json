@@ -1,0 +1,138 @@
+{
+	"name": "DS_EAAS_GOLD_AUTHORIZED_REP",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_EAAS_SQL_SERVER_CONNECTION",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "GOLD_AUTHORIZED_REP_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "GOLD_MEMBER_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "AUTHORIZED_REP_FIRST_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_MIDDLE_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_LAST_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_ADDRESS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_CITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_STATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_ZIP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_DOB",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "AUTHORIZED_REP_GENDER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_RELATIONSHIP_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_PHONE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_EMAIL_ADDR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_RECEIVED_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "AUTHORIZED_REP_EFFECTIVE_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "AUTHORIZED_REP_EXPIRE_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "AUTHORIZED_REP_TERM_REASON",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_STATUS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_DOCTYPE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UPDATED_BY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CREATED_ON",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "UPDATED_ON",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "UID",
+				"type": "uniqueidentifier"
+			},
+			{
+				"name": "AUTHORIZED_REP_TERM_REASON_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "APPLICATION_ID",
+				"type": "bigint",
+				"precision": 19
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "GOLD_AUTHORIZED_REP"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

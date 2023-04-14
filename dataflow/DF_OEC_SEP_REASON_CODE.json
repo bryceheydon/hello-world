@@ -1,0 +1,48 @@
+{
+	"name": "DF_OEC_SEP_REASON_CODE",
+	"properties": {
+		"folder": {
+			"name": "OEC"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "LS_EAAS_SQL_SERVER_CONNECTION",
+						"type": "LinkedServiceReference"
+					},
+					"name": "TxApplication"
+				},
+				{
+					"dataset": {
+						"referenceName": "TX_APPLICATION",
+						"type": "DatasetReference"
+					},
+					"name": "MultipleSeps"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_EAAS_SEPREASONCODE",
+						"type": "DatasetReference"
+					},
+					"name": "SepReasonCode"
+				}
+			],
+			"transformations": [
+				{
+					"name": "trimSEPCODE"
+				},
+				{
+					"name": "JnMultipleMbi"
+				},
+				{
+					"name": "FilterMultipleMBIs"
+				}
+			],
+			"script": "parameters{\n\tFileName as string (\"S2668_2021_08-09-2021_OECAlldata.txt\"),\n\tBlobContainer as string (\"eaas-container\"),\n\tBlobProcessingTemp as string (\"oec/processing/temp\")\n}\nsource(output(\n\t\tAPPLICATION_ID as long,\n\t\tMBI as string,\n\t\tSEP_REASON_CODE as string,\n\t\tSEP_REASON_CODE_DATE as date\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'query',\n\tstore: 'sqlserver',\n\tquery: (\"select APPLICATION_ID,MBI,case when (charindex(' ',trim(value)) = 0) then value else substring(value,1,charindex(' ',trim(value))) end as SEP_REASON_CODE,case when substring(trim(value),4,12) ='' then NULL else cast(SUBSTRING(substring(trim(value),charindex(' ',trim(value))+1,len(trim(value))), 1, 2)+'-'+ SUBSTRING(substring(trim(value),charindex(' ',trim(value))+1,len(trim(value))), 3, 2)+'-'+SUBSTRING(substring(trim(value),charindex(' ',trim(value))+1,len(trim(value))), 5, 4) as date) end as SEP_REASON_CODE_DATE from (select Application_Id,MBI,FILE_ID,value from [dbo].[TX_APPLICATION] cross apply string_split(sep_reason_code ,',')) as AP,[dbo].[TX_FILE] TX WHERE AP.FILE_ID=TX.FILE_ID AND trim(TX.FILE_NAME) = '\"+$FileName+\"'\"),\n\tisolationLevel: 'READ_UNCOMMITTED') ~> TxApplication\nsource(output(\n\t\tref_mbi as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: (\"select distinct mbi as ref_mbi from [dbo].[TX_APPLICATION] ap inner join [dbo].[TX_FILE] fl on ap.file_id=fl.file_id  where  CHARINDEX(',',SEP_REASON_CODE)!=0 and trim(fl.FILE_NAME) = '\"+$FileName+\"'\"),\n\tformat: 'query') ~> MultipleSeps\nFilterMultipleMBIs derive(SEP_REASON_CODE = trim(SEP_REASON_CODE)) ~> trimSEPCODE\nTxApplication, MultipleSeps join(MBI == ref_mbi,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JnMultipleMbi\nJnMultipleMbi filter(isNull(ref_mbi)) ~> FilterMultipleMBIs\ntrimSEPCODE sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tAPPLICATION_ID as integer,\n\t\tMBI as string,\n\t\tSEP_REASON_CODE as string,\n\t\tSEP_REASON_CODE_DATE as timestamp\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tAPPLICATION_ID,\n\t\tMBI,\n\t\tSEP_REASON_CODE,\n\t\tSEP_REASON_CODE_DATE\n\t)) ~> SepReasonCode"
+		}
+	}
+}

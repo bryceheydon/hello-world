@@ -1,0 +1,51 @@
+{
+	"name": "DS_EAAS_TX_RECORD_FAILURE",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_EAAS_SQL_SERVER_CONNECTION",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "RECORD_FAILURE_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "CREATED_ON",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CREATED_BY",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "RECORD_STRING",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FILE_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "INSERT_DATETIME",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "UID",
+				"type": "uniqueidentifier"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "TX_RECORD_FAILURE"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

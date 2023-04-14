@@ -1,0 +1,35 @@
+{
+	"name": "DF_OEC_GOLD_MEMBER_TRANSACTION_LOAD",
+	"properties": {
+		"folder": {
+			"name": "OEC"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_EAAS_TX_APPLICATION",
+						"type": "DatasetReference"
+					},
+					"name": "DsOecAplication"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_EAAS_GOLD_MEMBER_TRANSACTION",
+						"type": "DatasetReference"
+					},
+					"name": "DsGoldMemberTrnsTbl"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DerivedColumn1"
+				}
+			],
+			"script": "parameters{\n\tOecFileName as string (\"T2668_2021_05-24-2021_IKOEC.txt\")\n}\nsource(output(\n\t\tAPPLICATION_ID as long,\n\t\tGOLD_MEMBER_ID as long,\n\t\tFILE_ID as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: (\"select  AP.APPLICATION_ID,GL.GOLD_MEMBER_ID,FL.FILE_ID FROM [dbo].[TX_APPLICATION] AP INNER JOIN [dbo].[TX_FILE] FL ON AP.FILE_ID=FL.FILE_ID INNER JOIN [dbo].[GOLD_MEMBER] GL on AP.MBI = GL.MBI AND AP.PLAN_ID = GL.PBP_NUMBER WHERE trim(FILE_NAME) = '\"+$OecFileName+\"'\"),\n\tformat: 'query') ~> DsOecAplication\nDsOecAplication derive(CreateDate = currentDate()) ~> DerivedColumn1\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tGOLD_MEMBER_TX_ID as long,\n\t\tAPPLICATION_ID as long,\n\t\tBEQ_REQUEST_ID as long,\n\t\tBEQ_RESPONSE_ID as long,\n\t\tTX_MARX_REQUEST_ID as long,\n\t\tTX_DTRR_RESPONSE_ID as long,\n\t\tTX_834_ID as long,\n\t\tFILE_ID as long,\n\t\tCREATED_ON as timestamp,\n\t\tDUPLICATE_MEMBER_IND as integer,\n\t\tGOLD_MEMBER_ID as long,\n\t\tMBI as string,\n\t\tPBP_NUMBER as string,\n\t\tINSERT_DATETIME as timestamp,\n\t\tUID as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tAPPLICATION_ID,\n\t\tFILE_ID,\n\t\tCREATED_ON = CreateDate,\n\t\tGOLD_MEMBER_ID\n\t)) ~> DsGoldMemberTrnsTbl"
+		}
+	}
+}
