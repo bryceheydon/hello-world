@@ -1,0 +1,7 @@
+{
+	"name": "AzureTableStorage_Attributes",
+	"properties": {
+		"privateLinkResourceId": "/subscriptions/b4b8d5dc-65ab-474e-9f82-6346f854a39f/resourceGroups/OPAS-STG/providers/Microsoft.Storage/storageAccounts/opasfasastg",
+		"groupId": "table"
+	}
+}

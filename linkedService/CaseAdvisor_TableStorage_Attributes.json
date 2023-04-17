@@ -1,0 +1,15 @@
+{
+	"name": "CaseAdvisor_TableStorage_Attributes",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureTableStorage",
+		"typeProperties": {
+			"connectionString": "BlobEndpoint=https://storagesample.blob.core.windows.net; SharedAccessSignature=sv=2015-04-05&sr=b&si=tutorial-policy-635959936145100803&sig=9aCzs76n0E7y5BpEi2GvsSv433BZa22leDOZXX%2BXXIU%3D"
+		},
+		"connectVia": {
+			"referenceName": "VirtualNetworkntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

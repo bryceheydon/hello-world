@@ -1,0 +1,15 @@
+{
+	"name": "brhadfarmemptycentral",
+	"location": "centralus",
+	"identity": {
+		"type": "SystemAssigned,UserAssigned",
+		"principalId": "d374b5da-c3b6-4a39-95ee-5db0c82e0df5",
+		"tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+		"userAssignedIdentities": {
+			"/subscriptions/2e43985a-872d-4274-a0d6-89f0fd056a42/resourcegroups/brhprac/providers/Microsoft.ManagedIdentity/userAssignedIdentities/brhuserassigned": {
+				"clientId": "8ef5c6c4-74fa-4404-8b41-d32c612b7e72",
+				"principalId": "94629050-bc70-4183-87bd-586999c04c4b"
+			}
+		}
+	}
+}
