@@ -818,43 +818,6 @@
 										]
 									},
 									{
-										"name": "DF_OEC_ACTIVITY_APPLICATIN_ID_UPDATE",
-										"type": "ExecuteDataFlow",
-										"dependsOn": [
-											{
-												"activity": "DF_OEC_GOLD_MEMBER_MBR_MATCH",
-												"dependencyConditions": [
-													"Succeeded"
-												]
-											}
-										],
-										"policy": {
-											"timeout": "1.00:00:00",
-											"retry": 0,
-											"retryIntervalInSeconds": 30,
-											"secureOutput": false,
-											"secureInput": false
-										},
-										"userProperties": [],
-										"typeProperties": {
-											"dataflow": {
-												"referenceName": "DF_OEC_ACTIVITY_APPLICATIN_ID_UPDATE",
-												"type": "DataFlowReference",
-												"parameters": {
-													"OecFileName": {
-														"value": "'@{item().name}'",
-														"type": "Expression"
-													}
-												}
-											},
-											"integrationRuntime": {
-												"referenceName": "EAAS-ADF-IR",
-												"type": "IntegrationRuntimeReference"
-											},
-											"traceLevel": "Fine"
-										}
-									},
-									{
 										"name": "DF_SEP_REASON_TX_ACTIVITY",
 										"type": "ExecuteDataFlow",
 										"dependsOn": [
