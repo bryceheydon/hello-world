@@ -1,0 +1,126 @@
+{
+	"name": "GOLD_MEMBERS_ENROLLMENT_CHANGE_HISTORY",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_EAAS_SQL_SERVER_CONNECTION",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "GOLD_MEMBERS_ENROLLMENT_CHANGE_HISTORY_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "GOLD_MEMBER_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ENROLLMENT_EFFECTIVE_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "EFFECTIVE_DATE_DISENROLLMENT",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "DISENROLLMENT_REASON_CODE",
+				"type": "varchar"
+			},
+			{
+				"name": "PBP_NUMBER",
+				"type": "varchar"
+			},
+			{
+				"name": "PRODUCT_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "PRODUCT_CLASS",
+				"type": "varchar"
+			},
+			{
+				"name": "PRODUCT_GROUP",
+				"type": "varchar"
+			},
+			{
+				"name": "PRODUCT_SUBGROUP",
+				"type": "varchar"
+			},
+			{
+				"name": "PRODUCT_TYPE_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "CONTRACT_NUMBER",
+				"type": "varchar"
+			},
+			{
+				"name": "PRODUCT_PLAN_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "SEGMENT_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "ELECTION_TYPE_CODE",
+				"type": "varchar"
+			},
+			{
+				"name": "SOURCE_TYPE_CODE",
+				"type": "varchar"
+			},
+			{
+				"name": "EGHP_FLAG",
+				"type": "varchar"
+			},
+			{
+				"name": "UPDATED_BY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CREATED_ON",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "UPDATED_ON",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "UID",
+				"type": "uniqueidentifier"
+			},
+			{
+				"name": "GOLD_MEMBER_STATUS_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MAINTENANCE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "APPLICATION_ID",
+				"type": "bigint",
+				"precision": 19
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "GOLD_MEMBERS_ENROLLMENT_CHANGE_HISTORY"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

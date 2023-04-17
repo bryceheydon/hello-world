@@ -1,0 +1,24 @@
+{
+	"name": "DS_OEC_ERROR_INPUT",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_EAAS_BLOB_STORAGE_CONNECTION",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"folderPath": "oec/reject",
+				"container": "eaas-container"
+			},
+			"columnDelimiter": "|",
+			"escapeChar": "\\",
+			"firstRowAsHeader": false,
+			"quoteChar": ""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

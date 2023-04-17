@@ -1,0 +1,92 @@
+{
+	"name": "DS_EAAS_GOLD_MEMBER_TRANSACTION",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_EAAS_SQL_SERVER_CONNECTION",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "GOLD_MEMBER_TX_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "APPLICATION_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "BEQ_REQUEST_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "BEQ_RESPONSE_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "TX_MARX_REQUEST_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "TX_DTRR_RESPONSE_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "TX_834_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "FILE_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "CREATED_ON",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "DUPLICATE_MEMBER_IND",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "GOLD_MEMBER_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "MBI",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PBP_NUMBER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INSERT_DATETIME",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "UID",
+				"type": "uniqueidentifier"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "GOLD_MEMBER_TRANSACTION"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

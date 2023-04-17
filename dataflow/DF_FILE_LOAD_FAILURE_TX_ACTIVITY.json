@@ -1,0 +1,31 @@
+{
+	"name": "DF_FILE_LOAD_FAILURE_TX_ACTIVITY",
+	"properties": {
+		"folder": {
+			"name": "COMMON"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_EAAS_TX_FILE",
+						"type": "DatasetReference"
+					},
+					"name": "TXFILE"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_EAAS_TX_ACTIVITY",
+						"type": "DatasetReference"
+					},
+					"name": "TXACTIVITY"
+				}
+			],
+			"transformations": [],
+			"script": "parameters{\n\tFileName as string (\"EFTO.RS2668.#BQN4.D210318.T1306547\"),\n\tActivityTypeName as string (\"BEQ Response Load Failure\"),\n\tWorkQueueName as string (\"BEQ Response File Load Failure\")\n}\nsource(output(\n\t\tFILE_ID as long,\n\t\tCREATED_BY as long,\n\t\tACTIVITY_TYPE_ID as integer,\n\t\tCREATED_ON as timestamp,\n\t\tWORK_QUEUE_ID as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: (\"select FILE_ID ,(select USER_ID as CREATED_BY from dbo.CONFIG_USER where USERNAME='ETL') as CREATED_BY,(select ACTIVITY_TYPE_ID from dbo.REF_ACTIVITY_TYPE refact where trim(ACTIVITY_TYPE_NAME)='\"+$ActivityTypeName+\"') as ACTIVITY_TYPE_ID ,current_timestamp as CREATED_ON ,(select WORK_QUEUE_ID from dbo.REF_WORK_QUEUE where WORK_QUEUE_NAME = '\"+$WorkQueueName+\"') as WORK_QUEUE_ID from dbo.TX_FILE fl where trim(FILE_NAME) = '\"+$FileName+\"'\" ),\n\tformat: 'query') ~> TXFILE\nTXFILE sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tACTIVITY_ID as long,\n\t\tACTIVITY_TYPE_ID as integer,\n\t\tCREATED_ON as timestamp,\n\t\tCREATED_BY as long,\n\t\tWORK_QUEUE_ID as long,\n\t\tASSIGNED_TO as long,\n\t\tASSIGNED_BY as long,\n\t\tAPPLICATION_ID as long,\n\t\tRECORD_FAILURE_ID as long,\n\t\tBEQ_REQUEST_ID as long,\n\t\tACCEPTED_ON as timestamp,\n\t\tBEQ_RESPONSE_ID as long,\n\t\tBRE_LETTER_REQUEST_ID as long,\n\t\tPERFORMED_BY as long,\n\t\tCOMPLETED_ON as timestamp,\n\t\tDUE_DATE as timestamp,\n\t\tTX_DTRR_RESPONSE_ID as long,\n\t\tFILE_ID as long,\n\t\tTX_834_ID as long,\n\t\tACTIVITY_OUTCOME_ID as integer,\n\t\tTRANSACTION_CODE as string,\n\t\tTX_MARX_REQUEST_ID as long,\n\t\tINSERT_DATETIME as timestamp,\n\t\tUID as string,\n\t\tMMR_ID as long,\n\t\tACTIVITY_STATUS_ID as integer,\n\t\tBRE_RESPONSE_ID as long,\n\t\tLEPD_ID as long,\n\t\tFEFD_ID as long,\n\t\tPREV_ACTIVITY_ID as long,\n\t\tPROCESS_TYPE_ID as integer,\n\t\tMPWR_ID as long,\n\t\tLETTER_CODE as string,\n\t\tDENIAL_REASON as string,\n\t\tTRANSACTION_ID as long,\n\t\tSEQUENCE as integer,\n\t\tLETTER_QUEUE_ID as long,\n\t\tLIS_HIST_ID as long,\n\t\tATTESTATION_ID as long,\n\t\tTASK_DESC as string,\n\t\tADD_TO_REPORT_Y_N as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tACTIVITY_TYPE_ID,\n\t\tCREATED_ON,\n\t\tCREATED_BY,\n\t\tWORK_QUEUE_ID,\n\t\tFILE_ID\n\t)) ~> TXACTIVITY"
+		}
+	}
+}

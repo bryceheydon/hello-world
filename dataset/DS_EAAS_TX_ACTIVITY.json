@@ -1,0 +1,222 @@
+{
+	"name": "DS_EAAS_TX_ACTIVITY",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_EAAS_SQL_SERVER_CONNECTION",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ACTIVITY_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ACTIVITY_TYPE_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CREATED_ON",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CREATED_BY",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "WORK_QUEUE_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ASSIGNED_TO",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ASSIGNED_BY",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "APPLICATION_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "RECORD_FAILURE_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "BEQ_REQUEST_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ACCEPTED_ON",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "BEQ_RESPONSE_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "BRE_LETTER_REQUEST_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "PERFORMED_BY",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "COMPLETED_ON",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "DUE_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "TX_DTRR_RESPONSE_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "FILE_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "TX_834_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ACTIVITY_OUTCOME_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TRANSACTION_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TX_MARX_REQUEST_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "INSERT_DATETIME",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "UID",
+				"type": "uniqueidentifier"
+			},
+			{
+				"name": "MMR_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ACTIVITY_STATUS_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "BRE_RESPONSE_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "LEPD_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "FEFD_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "PREV_ACTIVITY_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "PROCESS_TYPE_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MPWR_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "LETTER_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DENIAL_REASON",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TRANSACTION_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "SEQUENCE",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LETTER_QUEUE_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "LIS_HIST_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ATTESTATION_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "TASK_DESC",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ADD_TO_REPORT_Y_N",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "TX_ACTIVITY"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

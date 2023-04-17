@@ -1,0 +1,80 @@
+{
+	"name": "DF_OEC_TX_FILE",
+	"properties": {
+		"folder": {
+			"name": "OEC"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "LS_EAAS_BLOB_STORAGE_CONNECTION",
+						"type": "LinkedServiceReference"
+					},
+					"name": "FilelistOutput"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_EAAS_TX_FILE",
+						"type": "DatasetReference"
+					},
+					"name": "ConfigSrc"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_EAAS_TX_FILE",
+						"type": "DatasetReference"
+					},
+					"name": "CLIENTTYPEFILEID"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_EAAS_TX_FILE",
+						"type": "DatasetReference"
+					},
+					"name": "TblTxFile"
+				},
+				{
+					"linkedService": {
+						"referenceName": "LS_EAAS_BLOB_STORAGE_CONNECTION",
+						"type": "LinkedServiceReference"
+					},
+					"name": "NoHeaderTrailer"
+				}
+			],
+			"transformations": [
+				{
+					"name": "ConditionalSplit1"
+				},
+				{
+					"name": "JNGetTrailerInfo"
+				},
+				{
+					"name": "GetFileCreateReceiveDt"
+				},
+				{
+					"name": "SplitHeader"
+				},
+				{
+					"name": "SplitTrailerRec"
+				},
+				{
+					"name": "TgtSysCD"
+				},
+				{
+					"name": "ReNameSrcSysCd"
+				},
+				{
+					"name": "ClientTypeId"
+				},
+				{
+					"name": "SrcSysCd"
+				}
+			],
+			"script": "parameters{\n\tOutFileNm as string (\"S2668_2021-03-23_2021.txt\"),\n\tBlobContainer as string (\"eaas-container\"),\n\tBlobProcessing as string (\"oec/processing\"),\n\tBlobProcessingTemp as string (\"oec/processing/temp\"),\n\tClient as string (\"Farm Bureau Health Plan\"),\n\tSrcSystem as string (\"CMS\"),\n\tTgtSystem as string (\"EaaS\"),\n\tFileCount as integer (0)\n}\nsource(output(\n\t\t{_col0_} as string,\n\t\t{_col1_} as string\n\t),\n\tuseSchema: false,\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'delimited',\n\tcontainer: ($BlobContainer),\n\tfolderPath: ($BlobProcessing),\n\tfileName: ($OutFileNm),\n\tcolumnDelimiter: '~',\n\tescapeChar: '\\\\',\n\tquoteChar: '\\\"',\n\tcolumnNamesAsHeader: false,\n\tqutoChar: '\\\"') ~> FilelistOutput\nsource(output(\n\t\tSYSTEM_ID as long,\n\t\tSYSTEM_NAME as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'SELECT  SYSTEM_ID, SYSTEM_NAME FROM dbo.CONFIG_SYSTEM',\n\tformat: 'query') ~> ConfigSrc\nsource(output(\n\t\tCLIENT_FILE_TYPE_ID as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: (\"select ccft.CLIENT_FILE_TYPE_ID from dbo.REF_FILE_TYPE rft join dbo.CONFIG_CLIENT_FILE_TYPE ccft on rft.REF_FILE_TYPE_ID=ccft.REF_FILE_TYPE_ID join dbo.CLIENT c on c.CLIENT_ID=ccft.CLIENT_ID where trim(FILE_DESC)='OEC File' and trim(c.CLIENT_NAME)='\"+$Client+\"'\"),\n\tformat: 'query') ~> CLIENTTYPEFILEID\nFilelistOutput split(equals(substring({_col0_}, 1, 1), 'H'),\n\tequals(substring({_col0_}, 1, 1), 'T'),\n\tand(notEquals(substring({_col0_}, 1, 1), 'H'),notEquals(substring({_col0_}, 1, 1), 'T')),\n\tdisjoint: false) ~> ConditionalSplit1@(header, trailer, detail)\nSplitHeader, SplitTrailerRec join(File_Name == Trailer_FileName,\n\tjoinType:'inner',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'both')~> JNGetTrailerInfo\nJNGetTrailerInfo derive(Received_date = currentDate(),\n\t\tFile_create_date = toDate(File_create_date, 'MMddyyyy')) ~> GetFileCreateReceiveDt\nConditionalSplit1@header derive(header_ind = split({_col0_}, '\\t')[1],\n\t\tFile_create_date = split({_col0_}, '\\t')[2],\n\t\tFile_Name = $OutFileNm) ~> SplitHeader\nConditionalSplit1@trailer derive(Trailer_ind = substring({_col0_}, 1, 1),\n\t\tRecord_count = split({_col0_}, '\\t')[2],\n\t\tTrailer_FileName = $OutFileNm) ~> SplitTrailerRec\nReNameSrcSysCd, ConfigSrc join($TgtSystem == SYSTEM_NAME,\n\tjoinType:'inner',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'both')~> TgtSysCD\nSrcSysCd select(mapColumn(\n\t\t{_col0_} = ConditionalSplit1@header@{_col0_},\n\t\t{_col1_} = ConditionalSplit1@header@{_col1_},\n\t\theader_ind,\n\t\tFile_create_date,\n\t\tFile_Name,\n\t\t{_col0_} = ConditionalSplit1@trailer@{_col0_},\n\t\t{_col1_} = ConditionalSplit1@trailer@{_col1_},\n\t\tTrailer_ind,\n\t\tRecord_count,\n\t\tTrailer_FileName,\n\t\tReceived_date,\n\t\tSOURCE_SYSTEM_ID = SYSTEM_ID\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> ReNameSrcSysCd\nTgtSysCD, CLIENTTYPEFILEID join(1 == 1,\n\tjoinType:'inner',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'both')~> ClientTypeId\nGetFileCreateReceiveDt, ConfigSrc join($SrcSystem == SYSTEM_NAME,\n\tjoinType:'inner',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'both')~> SrcSysCd\nClientTypeId sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tFILE_ID as long,\n\t\tFILE_NAME as string,\n\t\tFILE_CONTROL_NUMBER as string,\n\t\tFILE_CREATED_DATE as timestamp,\n\t\tFILE_RECEIVED_DATE as timestamp,\n\t\tTOTAL_RECORDS_REPORTED as long,\n\t\tTOTAL_RECORDS_LOADED as long,\n\t\tSOURCE_SYSTEM_ID as long,\n\t\tTARGET_SYSTEM_ID as long,\n\t\tCLIENT_FILE_TYPE_ID as integer,\n\t\tTOTAL_RECORDS_FAILED as long,\n\t\tHEADER_CODE as string,\n\t\tTOTAL_RECORDS_REJECTED as long,\n\t\tINSERT_DATETIME as timestamp,\n\t\tUID as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tFILE_NAME = Trailer_FileName,\n\t\tFILE_CREATED_DATE = File_create_date,\n\t\tFILE_RECEIVED_DATE = Received_date,\n\t\tTOTAL_RECORDS_REPORTED = Record_count,\n\t\tSOURCE_SYSTEM_ID,\n\t\tTARGET_SYSTEM_ID = SYSTEM_ID,\n\t\tCLIENT_FILE_TYPE_ID,\n\t\tHEADER_CODE = header_ind\n\t)) ~> TblTxFile\nConditionalSplit1@detail sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\t{_col0_} as string,\n\t\t{_col1_} as string,\n\t\t{_col2_} as string\n\t),\n\tformat: 'delimited',\n\tcontainer: ($BlobContainer),\n\tfolderPath: ($BlobProcessingTemp),\n\tcolumnDelimiter: '~',\n\tescapeChar: '\\\\',\n\tquoteChar: '\\\"',\n\tcolumnNamesAsHeader: false,\n\tpartitionFileNames:[($OutFileNm)],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\t{_col0_}\n\t),\n\tpartitionBy('hash', 1),\n\tqutoChar: '\\\"') ~> NoHeaderTrailer"
+		}
+	}
+}

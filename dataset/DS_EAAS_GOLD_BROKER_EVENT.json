@@ -1,0 +1,105 @@
+{
+	"name": "DS_EAAS_GOLD_BROKER_EVENT",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_EAAS_SQL_SERVER_CONNECTION",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "GOLD_BROKER_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "GOLD_MEMBER_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "AGENT_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BROKER_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BROKER_FIRST_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BROKER_LAST_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BROKER_ADDR_LINE1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BROKER_ADDR_LINE2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BROKER_CITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BROKER_STATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BROKER_ZIP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BROKER_EFFECTIVE_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "BROKER_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "BROKER_STATUS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UPDATED_BY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CREATED_ON",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "UPDATED_ON",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "UID",
+				"type": "uniqueidentifier"
+			},
+			{
+				"name": "APPLICATION_ID",
+				"type": "bigint",
+				"precision": 19
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "GOLD_BROKER_EVENT"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

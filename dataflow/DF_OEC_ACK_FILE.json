@@ -1,0 +1,91 @@
+{
+	"name": "DF_OEC_ACK_FILE",
+	"properties": {
+		"folder": {
+			"name": "OEC"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_EAAS_TX_FILE",
+						"type": "DatasetReference"
+					},
+					"name": "TXFileACK"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_EAAS_TX_RECORD_FAILURE",
+						"type": "DatasetReference"
+					},
+					"name": "ReadOECErrorFile"
+				},
+				{
+					"linkedService": {
+						"referenceName": "LS_EAAS_BLOB_STORAGE_CONNECTION",
+						"type": "LinkedServiceReference"
+					},
+					"name": "OecSourceFile"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "LS_EAAS_BLOB_STORAGE_CONNECTION",
+						"type": "LinkedServiceReference"
+					},
+					"name": "OECACKFORMAT"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Unpivot1"
+				},
+				{
+					"name": "SelectFinalHeader"
+				},
+				{
+					"name": "Union1"
+				},
+				{
+					"name": "DerivedColumn1"
+				},
+				{
+					"name": "DerivedHeader"
+				},
+				{
+					"name": "SelectHeader"
+				},
+				{
+					"name": "DeriveSubscriber"
+				},
+				{
+					"name": "SelectRecordString"
+				},
+				{
+					"name": "DedupHdr"
+				},
+				{
+					"name": "SelReOrderColNames"
+				},
+				{
+					"name": "Union2"
+				},
+				{
+					"name": "SelConfirmationN"
+				},
+				{
+					"name": "JNConfirmationN"
+				},
+				{
+					"name": "DataTypChg"
+				},
+				{
+					"name": "SelSubId"
+				}
+			],
+			"script": "parameters{\n\tBlobContainer as string (\"eaas-container\"),\n\tBlobReject as string (\"oec/reject\"),\n\tOecFIleName as string (\"S2668_2021_07-13-2021_IKOECBRETest.txt\"),\n\tBlobOutput as string (\"oec/output\"),\n\tack as string (\"oec/output\"),\n\tBlobProcessingTemp as string (\"oec/processing/temp\")\n}\nsource(output(\n\t\tFILE_ID as long,\n\t\tTOTAL_RECORDS_REPORTED as long,\n\t\tTOTAL_RECORDS_LOADED as long,\n\t\tTOTAL_RECORDS_FAILED as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: (\"select FILE_ID,TOTAL_RECORDS_REPORTED,TOTAL_RECORDS_LOADED,TOTAL_RECORDS_FAILED FROM dbo.tx_file where trim(FILE_NAME) = '\"+$OecFIleName+\"'\"),\n\tformat: 'query') ~> TXFileACK\nsource(output(\n\t\tfile_id as long,\n\t\trecord_string as string,\n\t\tfile_name as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpurgeFiles: true,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: (\"select rf.file_id,rf.record_string,fl.file_name from dbo.TX_RECORD_FAILURE rf join dbo.tx_file fl on rf.file_id=fl.file_id where trim(FILE_NAME) = '\"+$OecFIleName+\"'\"),\n\tformat: 'query',\n\twildcardPaths:[($BlobReject)]) ~> ReadOECErrorFile\nsource(output(\n\t\tConfirmationNumber as string,\n\t\tSubmitDate as integer,\n\t\tContractID as string,\n\t\tPlanID as short,\n\t\tSegmentID as short,\n\t\tApplicantTitle as string,\n\t\tApplicantFirstName as string,\n\t\tApplicantMiddleInitial as string,\n\t\tApplicantLastName as string,\n\t\tApplicantBirthDate as integer,\n\t\tApplicantGender as string,\n\t\tApplicantAddress1 as string,\n\t\tApplicantAddress2 as string,\n\t\tApplicantAddress3 as string,\n\t\tApplicantCity as string,\n\t\tApplicantCounty as string,\n\t\tApplicantState as string,\n\t\tApplicantZip as integer,\n\t\tApplicantPhone as long,\n\t\tApplicantEmailAddress as string,\n\t\tApplicantMBI as string,\n\t\tApplicantSSN as string,\n\t\tMailingAddress1 as string,\n\t\tMailingAddress2 as string,\n\t\tMailingAddress3 as string,\n\t\tMailingCity as string,\n\t\tMailingState as string,\n\t\tMailingZip as integer,\n\t\tMedicarePartA as string,\n\t\tMedicarePartB as string,\n\t\tEmergencyContact as string,\n\t\tEmergencyPhone as string,\n\t\tEmergencyRelationship as string,\n\t\tPremiumDeducted as boolean,\n\t\tPremiumSource as string,\n\t\tOtherCoverage as boolean,\n\t\tOtherCoverageName as string,\n\t\tOtherCoverageID as string,\n\t\tLongTerm as string,\n\t\tLongTermName as string,\n\t\tLongTermAddress as string,\n\t\tLongTermPhone as string,\n\t\tAuthorizedRepName as string,\n\t\tAuthorizedRepAddress as string,\n\t\tAuthorizedRepCity as string,\n\t\tAuthorizedRepState as string,\n\t\tAuthorizedRepZip as string,\n\t\tAuthorizedRepPhone as string,\n\t\tAuthorizedRepRelationship as string,\n\t\tLanguage as string,\n\t\tESRD as string,\n\t\tStateMedicaid as string,\n\t\tWorkStatus as string,\n\t\tPrimaryCarePhysician as string,\n\t\tOtherCoverageGroup as string,\n\t\tAgentID as string,\n\t\tSubmitTime as string,\n\t\tPartDSubAppInd as string,\n\t\tDeemedInd as string,\n\t\tSubsidyPercentage as string,\n\t\tDeemedReasonCode as string,\n\t\tLISCopayLevelID as string,\n\t\tDeemedCopayLevelID as string,\n\t\tPartDOptOutSwitch as string,\n\t\tSEPReasonCode as string,\n\t\tSEPCMSReasonCode as string,\n\t\tPremiumDirectPay as boolean,\n\t\tEnrollmentPlanYear as short,\n\t\tPremiumWithhold as string,\n\t\tSpouseWorkStatus as string,\n\t\tAccessibilityFormat as string,\n\t\tEmailOptIn as boolean,\n\t\tSubscriberID as integer,\n\t\tApplicationSource as string,\n\t\tCountyOffice as string,\n\t\t{Intended Effective Date} as integer,\n\t\tBrokerID as string\n\t),\n\tuseSchema: false,\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'delimited',\n\tcontainer: ($BlobContainer),\n\tfolderPath: ($BlobProcessingTemp),\n\tfileName: ($OecFIleName),\n\tcolumnDelimiter: '\\t',\n\tescapeChar: '\\\\',\n\tquoteChar: '',\n\tcolumnNamesAsHeader: true) ~> OecSourceFile\nTXFileACK unpivot(output(\n\t\tOEC_ACK as string,\n\t\tTOTAL_RECORDS_REPORTED as long,\n\t\tTOTAL_RECORDS_LOADED as long,\n\t\tTOTAL_RECORDS_FAILED as long\n\t),\n\tungroupBy(FILE_ID),\n\tlateral: true,\n\tignoreNullPivots: false) ~> Unpivot1\nUnpivot1 select(mapColumn(\n\t\tOEC_ACK,\n\t\tTOTAL_RECORDS_REPORTED\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectFinalHeader\nDerivedColumn1, Union2 union(byName: false)~> Union1\nSelectFinalHeader derive(TOTAL_RECORDS_REPORTED = toString(TOTAL_RECORDS_REPORTED)) ~> DerivedColumn1\nSelSubId derive(SUBSCRIBER_ID = toString('SUBSCRIBER_ID'),\n\t\tERROR_MESSAGE = toString('ERROR MESSAGE'),\n\t\tSUB_VALUE = toString(SUB_VALUE),\n\t\tSubscriberID_value = toString(SUB_VALUE)) ~> DerivedHeader\nDerivedHeader select(mapColumn(\n\t\tSUB_VALUE,\n\t\trecord_string,\n\t\tSUBSCRIBER_ID,\n\t\tERROR_MESSAGE\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectHeader\nSelectRecordString derive(Sub_VALUE = split(record_string, ',')[1]) ~> DeriveSubscriber\nReadOECErrorFile select(mapColumn(\n\t\trecord_string\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectRecordString\nSelectHeader aggregate(groupBy(SUBSCRIBER_ID),\n\tERROR_MESSAGE = first(ERROR_MESSAGE)) ~> DedupHdr\nJNConfirmationN select(mapColumn(\n\t\trecord_string,\n\t\tSUB_VALUE = SubscriberID\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelReOrderColNames\nDedupHdr, SelSubId union(byName: false)~> Union2\nOecSourceFile select(mapColumn(\n\t\tConfirmationNumber,\n\t\tSubscriberID\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelConfirmationN\nDeriveSubscriber, SelConfirmationN join(Sub_VALUE == ConfirmationNumber,\n\tjoinType:'inner',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'both')~> JNConfirmationN\nSelReOrderColNames derive(SUB_VALUE = toString(SUB_VALUE)) ~> DataTypChg\nDataTypChg select(mapColumn(\n\t\tSUB_VALUE,\n\t\trecord_string\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelSubId\nUnion1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delimited',\n\tcontainer: ($BlobContainer),\n\tfolderPath: ($BlobOutput),\n\tcolumnDelimiter: '|',\n\tescapeChar: '\\\\',\n\tquoteChar: '\\\"',\n\tcolumnNamesAsHeader: false,\n\tpartitionFileNames:[(concat('ACK_',$OecFIleName))],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1),\n\tqutoChar: '\\\"') ~> OECACKFORMAT"
+		}
+	}
+}

@@ -1,0 +1,69 @@
+{
+	"name": "DF_SEP_REASON_TX_ACTIVITY",
+	"properties": {
+		"description": "Added new sources to capture application under process for multiple application.",
+		"folder": {
+			"name": "OEC"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_EAAS_TX_FILE",
+						"type": "DatasetReference"
+					},
+					"name": "TXFILE"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_EAAS_TX_FILE",
+						"type": "DatasetReference"
+					},
+					"name": "FILEdata"
+				},
+				{
+					"linkedService": {
+						"referenceName": "LS_EAAS_BLOB_STORAGE_CONNECTION",
+						"type": "LinkedServiceReference"
+					},
+					"name": "MultipleMbis"
+				},
+				{
+					"linkedService": {
+						"referenceName": "LS_EAAS_SQL_SERVER_CONNECTION",
+						"type": "LinkedServiceReference"
+					},
+					"name": "SelActivityRow"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_EAAS_TX_ACTIVITY",
+						"type": "DatasetReference"
+					},
+					"name": "TXACTIVITY"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Join1"
+				},
+				{
+					"name": "Join2"
+				},
+				{
+					"name": "SelMultiMbi"
+				},
+				{
+					"name": "SelSepReasonCode"
+				},
+				{
+					"name": "Union1"
+				}
+			],
+			"script": "parameters{\n\tFileName as string (\"S2668_2022_03-06-2022_Multi application_RP_DAY1.txt\"),\n\tActivityTypeName as string (\"OEC File Received\"),\n\tBlobContainer as string (\"eaas-container\"),\n\tBlobProcessingTemp as string (\"oec/processing/temp\")\n}\nsource(output(\n\t\tWORK_QUEUE_ID as long,\n\t\tACTIVITY_TYPE_ID as integer,\n\t\tACTIVITY_OUTCOME_ID as integer,\n\t\tCREATED_BY as long,\n\t\tCREATED_ON as timestamp,\n\t\tACTIVITY_STATUS_ID as integer,\n\t\tDUE_DATE as timestamp,\n\t\tapplication_id as long,\n\t\tsep_reason_code as string,\n\t\tFILE_ID as long,\n\t\tError_Message as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: (\"select *,'Multiple SEP reason codes submitted for application: ' + T.sep_reason_code as Error_Message from (select wq.WORK_QUEUE_ID,actp.ACTIVITY_TYPE_ID,ACTIVITY_OUTCOME_ID,CREATED_BY,getdate() as CREATED_ON,1 as  ACTIVITY_STATUS_ID,GETDATE()+1 AS DUE_DATE from [dbo].[REF_WORK_QUEUE] wq inner join (select 1 as idcol,ACTIVITY_TYPE_ID from [dbo].[REF_ACTIVITY_TYPE] where ACTIVITY_TYPE_NAME='Pre-BEQ Error') actp on 1=actp.idcol inner join (select ACTIVITY_OUTCOME_ID from dbo.REF_ACTIVITY_OUTCOME where trim(ACTIVITY_OUTCOME)='Complete') AO ON 1=1 INNER JOIN (select USER_ID as CREATED_BY from dbo.CONFIG_USER where USERNAME='ETL') CR ON 1=1 where wq.WORK_QUEUE_NAME='Pre-BEQ Errors' ) as AP inner join (select application_id,sep_reason_code ,FILE_ID from [dbo].[TX_APPLICATION] where  CHARINDEX(',',SEP_REASON_CODE)!=0 ) as T on 1=1\"),\n\tformat: 'query') ~> TXFILE\nsource(output(\n\t\tREF_FILE_ID as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: (\"SELECT FILE_ID AS REF_FILE_ID FROM TX_FILE WHERE FILE_NAME = '\" +$FileName+ \"'\"),\n\tformat: 'query') ~> FILEdata\nsource(output(\n\t\t{_col0_} as string\n\t),\n\tuseSchema: false,\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'delimited',\n\tcontainer: ($BlobContainer),\n\tfolderPath: ($BlobProcessingTemp),\n\tfileName: ('MULTIPLE_MBI.txt'),\n\tcolumnDelimiter: ',',\n\tescapeChar: '\\\\',\n\tquoteChar: '\\\"',\n\tcolumnNamesAsHeader: false) ~> MultipleMbis\nsource(output(\n\t\tWORK_QUEUE_ID as long,\n\t\tACTIVITY_TYPE_ID as integer,\n\t\tACTIVITY_OUTCOME_ID as integer,\n\t\tCREATED_BY as long,\n\t\tCREATED_ON as timestamp,\n\t\tACTIVITY_STATUS_ID as integer,\n\t\tDUE_DATE as timestamp,\n\t\tapplication_id as long,\n\t\tmbi as string,\n\t\tFILE_ID as long,\n\t\tError_Message as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'query',\n\tstore: 'sqlserver',\n\tquery: 'select *,\\'Multiple Applications Received on Same Day for Member: \\' + T.mbi as Error_Message from (select wq.WORK_QUEUE_ID,actp.ACTIVITY_TYPE_ID,ACTIVITY_OUTCOME_ID,CREATED_BY,getdate() as CREATED_ON,1 as  ACTIVITY_STATUS_ID,GETDATE()+1 AS DUE_DATE from [dbo].[REF_WORK_QUEUE] wq inner join (select 1 as idcol,ACTIVITY_TYPE_ID from [dbo].[REF_ACTIVITY_TYPE] where ACTIVITY_TYPE_NAME=\\'Pre-BEQ Error\\') actp on 1=actp.idcol inner join (select ACTIVITY_OUTCOME_ID from dbo.REF_ACTIVITY_OUTCOME where trim(ACTIVITY_OUTCOME)=\\'Complete\\') AO ON 1=1 INNER JOIN (select USER_ID as CREATED_BY from dbo.CONFIG_USER where USERNAME=\\'ETL\\') CR ON 1=1 where wq.WORK_QUEUE_NAME=\\'Pre-BEQ Errors\\' ) as AP inner join (select application_id,mbi ,FILE_ID from [dbo].[TX_APPLICATION] ) as T on 1=1 ',\n\tisolationLevel: 'READ_UNCOMMITTED') ~> SelActivityRow\nUnion1, FILEdata join(FILE_ID == REF_FILE_ID,\n\tjoinType:'inner',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> Join1\nSelActivityRow, MultipleMbis join(mbi == {_col0_},\n\tjoinType:'inner',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'left')~> Join2\nJoin2 select(mapColumn(\n\t\tWORK_QUEUE_ID,\n\t\tACTIVITY_TYPE_ID,\n\t\tACTIVITY_OUTCOME_ID,\n\t\tCREATED_BY,\n\t\tCREATED_ON,\n\t\tACTIVITY_STATUS_ID,\n\t\tDUE_DATE,\n\t\tapplication_id,\n\t\tFILE_ID,\n\t\tError_Message\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelMultiMbi\nTXFILE select(mapColumn(\n\t\tWORK_QUEUE_ID,\n\t\tACTIVITY_TYPE_ID,\n\t\tACTIVITY_OUTCOME_ID,\n\t\tCREATED_BY,\n\t\tCREATED_ON,\n\t\tACTIVITY_STATUS_ID,\n\t\tDUE_DATE,\n\t\tapplication_id,\n\t\tFILE_ID,\n\t\tError_Message\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelSepReasonCode\nSelSepReasonCode, SelMultiMbi union(byName: false)~> Union1\nJoin1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tACTIVITY_ID as long,\n\t\tACTIVITY_TYPE_ID as integer,\n\t\tCREATED_ON as timestamp,\n\t\tCREATED_BY as long,\n\t\tWORK_QUEUE_ID as long,\n\t\tASSIGNED_TO as long,\n\t\tASSIGNED_BY as long,\n\t\tAPPLICATION_ID as long,\n\t\tRECORD_FAILURE_ID as long,\n\t\tBEQ_REQUEST_ID as long,\n\t\tACCEPTED_ON as timestamp,\n\t\tBEQ_RESPONSE_ID as long,\n\t\tBRE_LETTER_REQUEST_ID as long,\n\t\tPERFORMED_BY as long,\n\t\tCOMPLETED_ON as timestamp,\n\t\tDUE_DATE as timestamp,\n\t\tTX_DTRR_RESPONSE_ID as long,\n\t\tFILE_ID as long,\n\t\tTX_834_ID as long,\n\t\tACTIVITY_OUTCOME_ID as integer,\n\t\tTRANSACTION_CODE as string,\n\t\tTX_MARX_REQUEST_ID as long,\n\t\tINSERT_DATETIME as timestamp,\n\t\tUID as string,\n\t\tMMR_ID as long,\n\t\tACTIVITY_STATUS_ID as integer,\n\t\tBRE_RESPONSE_ID as long,\n\t\tLEPD_ID as long,\n\t\tFEFD_ID as long,\n\t\tPREV_ACTIVITY_ID as long,\n\t\tPROCESS_TYPE_ID as integer,\n\t\tMPWR_ID as long,\n\t\tLETTER_CODE as string,\n\t\tDENIAL_REASON as string,\n\t\tTRANSACTION_ID as long,\n\t\tSEQUENCE as integer,\n\t\tLETTER_QUEUE_ID as long,\n\t\tLIS_HIST_ID as long,\n\t\tATTESTATION_ID as long,\n\t\tTASK_DESC as string,\n\t\tADD_TO_REPORT_Y_N as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tACTIVITY_TYPE_ID,\n\t\tCREATED_BY,\n\t\tCREATED_ON,\n\t\tWORK_QUEUE_ID,\n\t\tAPPLICATION_ID = application_id,\n\t\tDUE_DATE,\n\t\tFILE_ID,\n\t\tACTIVITY_OUTCOME_ID,\n\t\tACTIVITY_STATUS_ID,\n\t\tTASK_DESC = Error_Message\n\t)) ~> TXACTIVITY"
+		}
+	}
+}
