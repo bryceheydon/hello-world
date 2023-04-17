@@ -1,0 +1,48 @@
+{
+	"name": "DF_OEC_ERROR_FILE_LOAD",
+	"properties": {
+		"folder": {
+			"name": "OEC"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_OEC_ERROR_INPUT",
+						"type": "DatasetReference"
+					},
+					"name": "ErrorInputFile"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_EAAS_TX_FILE",
+						"type": "DatasetReference"
+					},
+					"name": "RefTblTxFile"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_EAAS_TX_RECORD_FAILURE",
+						"type": "DatasetReference"
+					},
+					"name": "TxRecordFailure"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DerivFileName"
+				},
+				{
+					"name": "JnErrorTxFile"
+				},
+				{
+					"name": "SelectMapCols"
+				}
+			],
+			"script": "parameters{\n\tFileName as string\n}\nsource(output(\n\t\t{_col0_} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tpurgeFiles: true,\n\tpartitionRootPath: 'oec/reject',\n\tskipLines: 1,\n\twildcardPaths:['oec/reject']) ~> ErrorInputFile\nsource(output(\n\t\tFILE_ID as long,\n\t\tFILE_NAME as string,\n\t\tCREATED_BY as long,\n\t\tCREATED_ON as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: (\"select fl.FILE_ID,FILE_NAME,(select USER_ID as CREATED_BY from dbo.CONFIG_USER where USERNAME='ETL') as CREATED_BY, current_timestamp as CREATED_ON from  dbo.TX_FILE fl where trim(FILE_NAME) = '\"+$FileName+\"'\"),\n\tformat: 'query') ~> RefTblTxFile\nErrorInputFile derive(SrcFileName = $FileName) ~> DerivFileName\nDerivFileName, RefTblTxFile join(SrcFileName == FILE_NAME,\n\tjoinType:'inner',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'both')~> JnErrorTxFile\nJnErrorTxFile select(mapColumn(\n\t\t{_col0_},\n\t\tFILE_ID,\n\t\tCREATED_BY,\n\t\tCREATED_ON\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectMapCols\nSelectMapCols sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tRECORD_FAILURE_ID as long,\n\t\tCREATED_ON as string,\n\t\tCREATED_BY as long,\n\t\tRECORD_STRING as string,\n\t\tFILE_ID as long,\n\t\tINSERT_DATETIME as timestamp,\n\t\tUID as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tCREATED_ON,\n\t\tCREATED_BY,\n\t\tRECORD_STRING = {_col0_},\n\t\tFILE_ID\n\t)) ~> TxRecordFailure"
+		}
+	}
+}

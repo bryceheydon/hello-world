@@ -1,0 +1,31 @@
+{
+	"name": "DF_FILE_RECEIVED_SEND_TX_ACTIVITY",
+	"properties": {
+		"folder": {
+			"name": "COMMON"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_EAAS_TX_FILE",
+						"type": "DatasetReference"
+					},
+					"name": "TXFILE"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_EAAS_TX_ACTIVITY",
+						"type": "DatasetReference"
+					},
+					"name": "TXACTIVITY"
+				}
+			],
+			"transformations": [],
+			"script": "parameters{\n\tFileName as string (\"EFTO.RS2668.#BQN4.D210318.T1306547\"),\n\tActivityTypeName as string (\"BEQ Response File Received\")\n}\nsource(output(\n\t\tFILE_ID as long,\n\t\tACTIVITY_OUTCOME_ID as integer,\n\t\tCREATED_BY as long,\n\t\tACTIVITY_TYPE_ID as integer,\n\t\tCREATED_ON as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: (\"select FILE_ID,(select ACTIVITY_OUTCOME_ID from dbo.REF_ACTIVITY_OUTCOME where trim(ACTIVITY_OUTCOME)='Complete') as ACTIVITY_OUTCOME_ID,(select USER_ID as CREATED_BY from dbo.CONFIG_USER where USERNAME='ETL') as CREATED_BY, (select ACTIVITY_TYPE_ID from dbo.REF_ACTIVITY_TYPE where trim(ACTIVITY_TYPE_NAME)='\"+$ActivityTypeName+\"') as ACTIVITY_TYPE_ID,current_timestamp as CREATED_ON from dbo.TX_FILE fl where trim(FILE_NAME) = '\"+$FileName+\"'\"),\n\tformat: 'query') ~> TXFILE\nTXFILE sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tACTIVITY_ID as long,\n\t\tACTIVITY_TYPE_ID as integer,\n\t\tCREATED_ON as timestamp,\n\t\tCREATED_BY as long,\n\t\tWORK_QUEUE_ID as long,\n\t\tASSIGNED_TO as long,\n\t\tASSIGNED_BY as long,\n\t\tAPPLICATION_ID as long,\n\t\tRECORD_FAILURE_ID as long,\n\t\tBEQ_REQUEST_ID as long,\n\t\tACCEPTED_ON as timestamp,\n\t\tBEQ_RESPONSE_ID as long,\n\t\tBRE_LETTER_REQUEST_ID as long,\n\t\tPERFORMED_BY as long,\n\t\tCOMPLETED_ON as timestamp,\n\t\tDUE_DATE as timestamp,\n\t\tTX_DTRR_RESPONSE_ID as long,\n\t\tFILE_ID as long,\n\t\tTX_834_ID as long,\n\t\tACTIVITY_OUTCOME_ID as integer,\n\t\tTRANSACTION_CODE as string,\n\t\tTX_MARX_REQUEST_ID as long,\n\t\tINSERT_DATETIME as timestamp,\n\t\tUID as string,\n\t\tMMR_ID as long,\n\t\tACTIVITY_STATUS_ID as integer,\n\t\tBRE_RESPONSE_ID as long,\n\t\tLEPD_ID as long,\n\t\tFEFD_ID as long,\n\t\tPREV_ACTIVITY_ID as long,\n\t\tPROCESS_TYPE_ID as integer,\n\t\tMPWR_ID as long,\n\t\tLETTER_CODE as string,\n\t\tDENIAL_REASON as string,\n\t\tTRANSACTION_ID as long,\n\t\tSEQUENCE as integer,\n\t\tLETTER_QUEUE_ID as long,\n\t\tLIS_HIST_ID as long,\n\t\tATTESTATION_ID as long,\n\t\tTASK_DESC as string,\n\t\tADD_TO_REPORT_Y_N as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tpreSQLs:['update a  set a.TOTAL_RECORDS_LOADED = b.TOTAL_RECORDS_LOADED,a.TOTAL_RECORDS_FAILED = b.TOTAL_RECORDS_FAILED  \\n\t from dbo.TX_FILE a  inner join\\n(\\nselect (txfl.TOTAL_RECORDS_REPORTED - ld.TOTAL_RECORDS_LOADED) as TOTAL_RECORDS_FAILED, ld.TOTAL_RECORDS_LOADED, ld.file_id from [dbo].[TX_FILE] txfl\\ninner join \\n(select sum(TOTAL_RECORDS_LOADED) as TOTAL_RECORDS_LOADED,file_id from (\\nselect count(dt.file_id) as TOTAL_RECORDS_LOADED,dt.file_id from [dbo].[TX_DTRR_RESPONSE] dt\\ninner join [dbo].[TX_FILE] fl on dt.file_id = fl.file_id\\nwhere fl.TOTAL_RECORDS_LOADED is null \\ngroup by dt.file_id\\nunion \\nselect count(vb.file_id) as TOTAL_RECORDS_LOADED,vb.file_id from [dbo].[TX_DTRR_VERBATIM_RESPONSE] vb\\ninner join [dbo].[TX_FILE] fl on vb.file_id = fl.file_id\\nwhere fl.TOTAL_RECORDS_LOADED is null \\ngroup by vb.file_id)s group by s.file_id )ld on txfl.file_id = ld.file_id)b on a.file_id = b.file_id'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tACTIVITY_TYPE_ID,\n\t\tCREATED_ON,\n\t\tCREATED_BY,\n\t\tFILE_ID,\n\t\tACTIVITY_OUTCOME_ID\n\t)) ~> TXACTIVITY"
+		}
+	}
+}

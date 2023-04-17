@@ -1,0 +1,955 @@
+{
+	"name": "DS_EAAS_GOLD_MEMBER",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_EAAS_SQL_SERVER_CONNECTION",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "GOLD_MEMBER_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "MBI",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PBP_NUMBER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DOB",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "GENDER_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TITLE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LAST_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FIRST_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MIDDLE_INITIAL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ELECTION_TYPE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CONTRACT_NUMBER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DISENROLLMENT_REASON_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ENROLLMENT_EFFECTIVE_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "EFFECTIVE_DATE_DISENROLLMENT",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "SEGMENT_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PART_D_OPT_OUT_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MMP_OPT_OUT_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EGHP_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "APPLICATION_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CALCULATED_APPLICATION_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "ESRD_OVERRIDE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PREM_WITHHOLD_OPTION_PART_CD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CREDITABLE_COV_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "NUMBER_UNCOVERED_MONTHS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EMPLOYER_SUB_ENROLLMENT_OVERRIDE_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PREFERRED_LANG_NO_ENGLISH",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ACCESSIBLE_FORMAT_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SECONDARY_DRUG_INS_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SECONDARY_RX_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SECONDARY_RX_GROUP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ROLLED_FROM_CONTRACT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SOURCE_TYPE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ROLLED_FROM_PBP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PART_D_RX_BIN",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PART_D_RX_PCN",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PART_D_RX_GROUP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PART_D_RX_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SECONDARY_DRUG_BIN",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SECONDARY_DRUG_PCN",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RESIDENCE_ADDRESS_LINE1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RESIDENCE_ADDRESS_LINE2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RESIDENCE_ADDRESS_LINE3",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ADDRESS_CRUD_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RESIDENCE_CITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RESIDENCE_STATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RESIDENCE_ZIP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RESIDENCE_ZIP4",
+				"type": "nvarchar"
+			},
+			{
+				"name": "COUNTY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EMAIL_ADDRESS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EMAIL_OPT_IN",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PHONE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EMERGENCY_CONTACT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EMERGENCY_PHONE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EMERGENCY_RELATIONSHIP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MAIL_ADDRESS_LINE1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MAIL_ADDRESS_LINE2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MAIL_ADDRESS_LINE3",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MAIL_CITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MAIL_STATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MAIL_ZIP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CARA_STATUS_CRUD_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DRUG_CLASS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "NOTIFICATION_START_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "NOTIFICATION_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "POS_EDIT_STATUS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "POS_EDIT_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRESCRIBER_LIMITATION_STATUS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PHARMACY_LIMITATION_STATUS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "IMPLEMENTATION_START_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "IMPLEMENTATION_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "IC_MODEL_START_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "IC_MODEL_CRUD_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "IC_MODEL_TYPE_IND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "IC_MODEL_BENEFIT_STATUS_CODE",
+				"type": "varchar"
+			},
+			{
+				"name": "IC_MODEL_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "IC_MODEL_END_DATE_REASON_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "GOLD_MEMBER_STATUS_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SUBSCRIBER_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ESRD_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "HOSPICE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DTRR_EFFECTIVE_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "DTRR_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "DIALYSIS_START_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "DIALYSIS_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "HOSPICE_START_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "HOSPICE_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "MEDICARE_PART_A_ENTITLEMENT_START_DT",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "MEDICARE_PART_A_ENTITLEMENT_END_DT",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "MEDICARE_PART_B_ENTITLEMENT_START_DT",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "MEDICARE_PART_B_ENTITLEMENT_END_DT",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "PART_D_LOW_INC_SUB_LEVL_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LOW_INC_COPAY_CAT_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ESRD_START_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "ESRD_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "TRANSPLANT_START_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "TRANSPLANT_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "TRANSPLANT_FAILURE_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "PRODUCT_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "WORK_STATUS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SPOUSE_WORK_STATUS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DOD",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "DISABILITY_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INSTITUTIONALIZED_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INST_NHC_START_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "LOW_INC_PERIOD_EFF_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "LOW_INC_PERIOD_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "MSP_PERIOD_START_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "MSP_PERIOD_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CUM_NUM_UNCOV_MNTHS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MEDICAID_STATUS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PART_C_ENROLLMENT_START_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "PART_C_ENROLLMENT_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "PART_D_ELIG_START_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "PART_D_ELIG_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "PREM_WITHHOLD_OPTION_START_DT",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "PREM_WITHHOLD_OPTION_END_DT",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "DISABILITY_EFFECTIVE_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "DISABILITY_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "PREMIUM_WITHHOLD_STATUS_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "MAINTENANCE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CREATED_ON",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "UPDATED_ON",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "UID",
+				"type": "uniqueidentifier"
+			},
+			{
+				"name": "MAILING_ADDRESS_START_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "RESIDENCE_ADDRESS_START_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "INCARCERATION_START_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "INCARCERATION_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "NOT_LAWFUL_PRESENCE_START_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "NOT_LAWFUL_PRESENCE_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "OCCURRENCE",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "AUTHORIZED_REP_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_PHONE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_ADDRESS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_CITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_STATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_ZIP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_RELATIONSHIP_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PCP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LANGUAGE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_EXPIRE_DATE",
+				"type": "date"
+			},
+			{
+				"name": "AUTHORIZED_REP_RECEIVED_DATE",
+				"type": "date"
+			},
+			{
+				"name": "AUTHORIZED_REP_DOCTYPE_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PRODUCT_CLASS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RESIDENCE_ADDRESS_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "MAILING_ADDRESS_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "LEP_START_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "LEP_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "PART_D_LATE_ENROLL_PEN_AMT",
+				"type": "decimal",
+				"precision": 9,
+				"scale": 2
+			},
+			{
+				"name": "PART_D_LATE_ENROLL_WAIVE_AMT",
+				"type": "decimal",
+				"precision": 9,
+				"scale": 2
+			},
+			{
+				"name": "PART_D_LATE_ENROLL_PEN_SUB_AMT",
+				"type": "decimal",
+				"precision": 9,
+				"scale": 2
+			},
+			{
+				"name": "APPLICATION_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "SC_CODE_START_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "SC_CODE_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "STATE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "COUNTY_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PART_C_PREMIUM_AMT",
+				"type": "decimal",
+				"precision": 12,
+				"scale": 3
+			},
+			{
+				"name": "LOW_INC_PART_D_SUB_AMT",
+				"type": "decimal",
+				"precision": 12,
+				"scale": 3
+			},
+			{
+				"name": "PART_D_PREMIUM",
+				"type": "decimal",
+				"precision": 12,
+				"scale": 3
+			},
+			{
+				"name": "PREMIUM_WITHHOLD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_GROUP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "HOSPICE_PROVIDER_NUMBER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LOW_INC_SUB_SOURCE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MCAID_START_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "MCAID_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "TRANSPLANT_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_SUBGROUP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "HCBS_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "HCBS_START_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "HCBS_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "TRANA_ABII_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TRANA_ABII_START_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "TRANA_ABII_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "INST_NHC_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INST_START_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "INST_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "INST_NHC_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "DISENROLLMENT_SEP_CMS_REASON_CODE",
+				"type": "varchar"
+			},
+			{
+				"name": "ORIGINAL_EFFECTIVE_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "SECONDARY_PHONE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UPDATED_BY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MBI_START_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "MBI_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "PART_D_PREMIUM_START_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "PART_D_PREMIUM_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "MEDICAID_CRAF",
+				"type": "varchar"
+			},
+			{
+				"name": "PART_C_PREMIUM_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "PART_C_PREMIUM_START_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "PART_D_RX_EFFECTIVE_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "PART_D_RX_END_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "MSP_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RACE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ETHNICITY_CODE",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "GOLD_MEMBER"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

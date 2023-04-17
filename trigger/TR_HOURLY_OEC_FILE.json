@@ -1,0 +1,35 @@
+{
+	"name": "TR_HOURLY_OEC_FILE",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "PL_TX_APPLICATION",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"BlobContainer": "eaas-container",
+					"BlobLanding": "oec/landing",
+					"BlobProcessing": "oec/processing",
+					"FileString": " ",
+					"BlobReject": "oec/reject",
+					"BlobProcessingTemp": "oec/processing/temp",
+					"BlobOutput": "oec/output",
+					"SFTPOutbound": "SFTP_Stage/SIT/OutBound_From_EaaS/FBHP/",
+					"Client": "Members Health Insurance Company"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Hour",
+				"interval": 1,
+				"startTime": "2021-06-01T14:00:00",
+				"timeZone": "Central Standard Time"
+			}
+		}
+	}
+}

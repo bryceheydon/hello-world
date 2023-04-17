@@ -1,0 +1,27 @@
+{
+	"name": "TR_APPLICATION_STORAGE_EVENT",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "PL_TX_APPLICATION",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"FileString": " "
+				}
+			}
+		],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/eaas-container/blobs/oec/landing",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/dad2fc51-17cd-4205-9983-ea6421c45d3f/resourceGroups/Eaas-Sandbox/providers/Microsoft.Storage/storageAccounts/eaassboxdata",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}

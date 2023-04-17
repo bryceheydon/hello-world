@@ -1,0 +1,354 @@
+{
+	"name": "TX_APPLICATION",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_EAAS_SQL_SERVER_CONNECTION",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "APPLICATION_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "CONFIRMATION_NUMBER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SUBMIT_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CONTRACT_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PLAN_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SEGMENT_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TITLE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FIRST_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MIDDLE_INITIAL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LAST_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DOB",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "GENDER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ADDRESS_LINE1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ADDRESS_LINE2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ADDRESS_LINE3",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZIP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PHONE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EMAIL_ADDRESS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MBI",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SSN",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MAIL_ADDRESS_LINE1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MAIL_ADDRESS_LINE2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MAIL_ADDRESS_LINE3",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MAIL_CITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MAIL_STATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MAIL_ZIP",
+				"type": "varchar"
+			},
+			{
+				"name": "MEDICARE_PART_A",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 0
+			},
+			{
+				"name": "MEDICARE_PART_B",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 0
+			},
+			{
+				"name": "EMERGENCY_CONTACT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EMERGENCY_PHONE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EMERGENCY_RELATIONSHIP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PREMIUM_DEDUCTED",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PREMIUM_SOURCE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OTHER_COVERAGE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OTHER_COVERAGE_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LONG_TERM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LONG_TERM_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LONG_TERM_ADDRESS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LONG_TERM_PHONE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_ADDRESS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_CITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_STATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_ZIP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AUTHORIZED_REP_RELATIONSHIP_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ESRD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STATE_MEDICAID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "WORK_STATUS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PCP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OTHER_COVERAGE_GROUP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AGENT_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SUBMIT_TIME",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "PART_D_SUB_APP_IND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DEEMED_IND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SUBSIDY_PERCENTAGE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DEEMED_REASON_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LIS_COPAY_LEVEL_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DEEMED_COPAY_LEVEL_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PART_D_OPT_OUT_SWITCH",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SEP_REASON_CODE_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SEP_CMS_REASON_CODE_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PREMIUM_DIRECT_PAY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ENROLLMENT_PLAN_YEAR",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PREMIUM_WITHHOLD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SPOUSE_WORK_STATUS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ACCESSIBILITY_FORMAT_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "EMAIL_OPT_IN",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SUBSCRIBER_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "APP_SOURCE_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "COUNTY_OFFICE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INTENDED_EFFECTIVE_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "BROKER_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CLIENT_LANGUAGE_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "FILE_ID",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "CLIENT_PRODUCT_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "APP_STATUS_ID",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "RS_TX_APPLICATION"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

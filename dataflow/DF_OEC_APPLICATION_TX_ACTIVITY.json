@@ -1,0 +1,87 @@
+{
+	"name": "DF_OEC_APPLICATION_TX_ACTIVITY",
+	"properties": {
+		"folder": {
+			"name": "OEC"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_EAAS_TX_FILE",
+						"type": "DatasetReference"
+					},
+					"name": "TXFILE"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_EAAS_TX_ACTIVITY",
+						"type": "DatasetReference"
+					},
+					"name": "sourceActivity"
+				},
+				{
+					"linkedService": {
+						"referenceName": "LS_EAAS_BLOB_STORAGE_CONNECTION",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sourceFile"
+				},
+				{
+					"linkedService": {
+						"referenceName": "LS_EAAS_BLOB_STORAGE_CONNECTION",
+						"type": "LinkedServiceReference"
+					},
+					"name": "SelectMBIlatstDate"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_EAAS_TX_ACTIVITY",
+						"type": "DatasetReference"
+					},
+					"name": "TXACTIVITY"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_EAAS_TX_ACTIVITY",
+						"type": "DatasetReference"
+					},
+					"name": "sinkActivity"
+				}
+			],
+			"transformations": [
+				{
+					"name": "selectnewstatusrows"
+				},
+				{
+					"name": "filterDeniedAndRenroled"
+				},
+				{
+					"name": "FilterSameApplicationNextDay"
+				},
+				{
+					"name": "joinActivity"
+				},
+				{
+					"name": "filterdiscradnullapp"
+				},
+				{
+					"name": "SelectofNoActivityMBI"
+				},
+				{
+					"name": "join1"
+				},
+				{
+					"name": "split2"
+				},
+				{
+					"name": "derivedPsuedoColum"
+				}
+			],
+			"script": "parameters{\n\tFileName as string (\"FBHP_Eaas_Export_20221207015053_NewMapd.txt\"),\n\tActivityTypeName as string (\"OEC File Received\"),\n\tBlobContainer as string (\"eaas-container\"),\n\tBlobProcessingTemp as string (\"oec/processing/temp\")\n}\nsource(output(\n\t\tFILE_ID as long,\n\t\tMBI as string,\n\t\tACTIVITY_TYPE_ID as integer,\n\t\tCREATED_BY as long,\n\t\tCREATED_ON as timestamp,\n\t\tWORK_QUEUE_ID as long,\n\t\tAPPLICATION_ID as long,\n\t\tRECORD_FAILURE_ID as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: (\"select app.FILE_ID, app.MBI,ACTIVITY_TYPE_ID, (select USER_ID as CREATED_BY from dbo.CONFIG_USER where USERNAME='ETL') as CREATED_BY, current_timestamp as CREATED_ON, null as WORK_QUEUE_ID, app.APPLICATION_ID ,null as RECORD_FAILURE_ID from dbo.TX_APPLICATION app join dbo.TX_FILE fl on app.FILE_ID=fl.FILE_ID join dbo.REF_ACTIVITY_TYPE refact on trim(refact.ACTIVITY_TYPE_NAME)='Application Received'  where trim(FILE_NAME) = '\"+$FileName+\"' union select app.FILE_ID, app.MBI, ACTIVITY_TYPE_ID, (select USER_ID as CREATED_BY from dbo.CONFIG_USER where USERNAME='ETL') as CREATED_BY, current_timestamp as CREATED_ON, null as WORK_QUEUE_ID, app.APPLICATION_ID ,null as RECORD_FAILURE_ID from dbo.TX_APPLICATION app join dbo.TX_FILE fl on app.FILE_ID=fl.FILE_ID join dbo.REF_ACTIVITY_TYPE refact on trim(refact.ACTIVITY_TYPE_NAME)='Application Business Rule Execution'  where (CHARINDEX(',',SEP_REASON_CODE)=0 OR SEP_REASON_CODE IS NULL)  AND trim(FILE_NAME) = '\"+$FileName+\"' union select rec.FILE_ID,NULL as MBI,ACTIVITY_TYPE_ID,(select USER_ID as CREATED_BY from dbo.CONFIG_USER where USERNAME='ETL') as CREATED_BY, current_timestamp as CREATED_ON,refque.WORK_QUEUE_ID, null as APPLICATION_ID,rec.RECORD_FAILURE_ID from dbo.TX_RECORD_FAILURE rec join dbo.TX_FILE fl on rec.FILE_ID=fl.FILE_ID join dbo.REF_ACTIVITY_TYPE refact on trim(refact.ACTIVITY_TYPE_NAME)='Application Received' join dbo.REF_WORK_QUEUE refque on refque.ACTIVE_IND=1 and trim(refque.WORK_QUEUE_NAME)='IT Support' where trim(FILE_NAME) = '\"+$FileName+\"'\"),\n\tformat: 'query') ~> TXFILE\nsource(output(\n\t\tWORK_QUEUE_ID as long,\n\t\tACTIVITY_TYPE_ID as integer,\n\t\tACTIVITY_OUTCOME_ID as integer,\n\t\tCREATED_BY as long,\n\t\tCREATED_ON as timestamp,\n\t\tACTIVITY_STATUS_ID as integer,\n\t\tDUE_DATE as timestamp,\n\t\tapplication_id as long,\n\t\tmbi as string,\n\t\tFile_id as long,\n\t\tError_Message as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: (\"select *,'Multiple Applications Received for Member' as Error_Message from (select wq.WORK_QUEUE_ID,actp.ACTIVITY_TYPE_ID,ACTIVITY_OUTCOME_ID,CREATED_BY,getdate() as CREATED_ON,1 as  ACTIVITY_STATUS_ID,GETDATE()+1 AS DUE_DATE from [dbo].[REF_WORK_QUEUE] wq inner join (select 1 as idcol,ACTIVITY_TYPE_ID from [dbo].[REF_ACTIVITY_TYPE] where ACTIVITY_TYPE_NAME='Pre-BEQ Error') actp on 1=actp.idcol inner join (select ACTIVITY_OUTCOME_ID from dbo.REF_ACTIVITY_OUTCOME where trim(ACTIVITY_OUTCOME)='Complete') AO ON 1=1 INNER JOIN (select USER_ID as CREATED_BY from dbo.CONFIG_USER where USERNAME='ETL') CR ON 1=1 where wq.WORK_QUEUE_NAME='Pre-BEQ Errors' ) as AP inner join (select application_id,mbi ,a.File_id from tx_application a join tx_file t on a.file_id=t.file_id where t.file_name='\" + $FileName +\"' ) as T on 1=1 \"),\n\tformat: 'query') ~> sourceActivity\nsource(output(\n\t\t{_col0_} as string,\n\t\t{_col1_} as string,\n\t\t{_col2_} as date\n\t),\n\tuseSchema: false,\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'delimited',\n\tcontainer: ($BlobContainer),\n\tfolderPath: ($BlobProcessingTemp),\n\tfileName: ('ApplicationEnrollmentStatus_MBI.txt'),\n\tcolumnDelimiter: ',',\n\tescapeChar: '\\\\',\n\tquoteChar: '\\\"',\n\tcolumnNamesAsHeader: false) ~> sourceFile\nsource(output(\n\t\t{_col0_} as string\n\t),\n\tuseSchema: false,\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'delimited',\n\tcontainer: ($BlobContainer),\n\tfolderPath: ($BlobProcessingTemp),\n\tfileName: ('MULTIPLE_MBI.txt'),\n\tcolumnDelimiter: ',',\n\tescapeChar: '\\\\',\n\tquoteChar: '\\\"',\n\tcolumnNamesAsHeader: false) ~> SelectMBIlatstDate\nsourceFile select(mapColumn(\n\t\tGold_member_status_desc = {_col1_},\n\t\tMBI_File = {_col0_},\n\t\tEffective_Date_Disenrollment = {_col2_}\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> selectnewstatusrows\nselectnewstatusrows filter((trim(Gold_member_status_desc) != 'Enrollment Denied' && trim(Gold_member_status_desc)!= 'Enrollment Accepted')  || ( Effective_Date_Disenrollment >= currentDate() || isNull(Effective_Date_Disenrollment) && trim(Gold_member_status_desc) == 'Enrollment Accepted' )) ~> filterDeniedAndRenroled\nselectnewstatusrows filter(trim(Gold_member_status_desc) != 'Enrollment Denied' && trim(Gold_member_status_desc) != 'Enrollment Accepted') ~> FilterSameApplicationNextDay\nFilterSameApplicationNextDay, sourceActivity join(MBI_File == mbi,\n\tjoinType:'inner',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> joinActivity\nTXFILE filter(not(isNull(APPLICATION_ID))) ~> filterdiscradnullapp\nSelectMBIlatstDate select(mapColumn(\n\t\tNoActivityMBI = {_col0_}\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectofNoActivityMBI\nfilterdiscradnullapp, derivedPsuedoColum join(MBI == NoActivityMBI,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> join1\njoin1 split(isNull(NoActivityMBI),\n\tdisjoint: false) ~> split2@(DiscardMBiHavingLatestdateMulApp, DiscardAny)\nSelectofNoActivityMBI derive(PsuedoColumn = 1) ~> derivedPsuedoColum\nsplit2@DiscardMBiHavingLatestdateMulApp sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tACTIVITY_ID as long,\n\t\tACTIVITY_TYPE_ID as integer,\n\t\tCREATED_ON as timestamp,\n\t\tCREATED_BY as long,\n\t\tWORK_QUEUE_ID as long,\n\t\tASSIGNED_TO as long,\n\t\tASSIGNED_BY as long,\n\t\tAPPLICATION_ID as long,\n\t\tRECORD_FAILURE_ID as long,\n\t\tBEQ_REQUEST_ID as long,\n\t\tACCEPTED_ON as timestamp,\n\t\tBEQ_RESPONSE_ID as long,\n\t\tBRE_LETTER_REQUEST_ID as long,\n\t\tPERFORMED_BY as long,\n\t\tCOMPLETED_ON as timestamp,\n\t\tDUE_DATE as timestamp,\n\t\tTX_DTRR_RESPONSE_ID as long,\n\t\tFILE_ID as long,\n\t\tTX_834_ID as long,\n\t\tACTIVITY_OUTCOME_ID as integer,\n\t\tTRANSACTION_CODE as string,\n\t\tTX_MARX_REQUEST_ID as long,\n\t\tINSERT_DATETIME as timestamp,\n\t\tUID as string,\n\t\tMMR_ID as long,\n\t\tACTIVITY_STATUS_ID as integer,\n\t\tBRE_RESPONSE_ID as long,\n\t\tLEPD_ID as long,\n\t\tFEFD_ID as long,\n\t\tPREV_ACTIVITY_ID as long,\n\t\tPROCESS_TYPE_ID as integer,\n\t\tMPWR_ID as long,\n\t\tLETTER_CODE as string,\n\t\tDENIAL_REASON as string,\n\t\tTRANSACTION_ID as long,\n\t\tSEQUENCE as integer,\n\t\tLETTER_QUEUE_ID as long,\n\t\tLIS_HIST_ID as long,\n\t\tATTESTATION_ID as long,\n\t\tTASK_DESC as string,\n\t\tADD_TO_REPORT_Y_N as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tACTIVITY_TYPE_ID,\n\t\tCREATED_ON,\n\t\tCREATED_BY,\n\t\tWORK_QUEUE_ID,\n\t\tAPPLICATION_ID,\n\t\tRECORD_FAILURE_ID,\n\t\tFILE_ID\n\t)) ~> TXACTIVITY\njoinActivity sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tACTIVITY_ID as long,\n\t\tACTIVITY_TYPE_ID as integer,\n\t\tCREATED_ON as timestamp,\n\t\tCREATED_BY as long,\n\t\tWORK_QUEUE_ID as long,\n\t\tASSIGNED_TO as long,\n\t\tASSIGNED_BY as long,\n\t\tAPPLICATION_ID as long,\n\t\tRECORD_FAILURE_ID as long,\n\t\tBEQ_REQUEST_ID as long,\n\t\tACCEPTED_ON as timestamp,\n\t\tBEQ_RESPONSE_ID as long,\n\t\tBRE_LETTER_REQUEST_ID as long,\n\t\tPERFORMED_BY as long,\n\t\tCOMPLETED_ON as timestamp,\n\t\tDUE_DATE as timestamp,\n\t\tTX_DTRR_RESPONSE_ID as long,\n\t\tFILE_ID as long,\n\t\tTX_834_ID as long,\n\t\tACTIVITY_OUTCOME_ID as integer,\n\t\tTRANSACTION_CODE as string,\n\t\tTX_MARX_REQUEST_ID as long,\n\t\tINSERT_DATETIME as timestamp,\n\t\tUID as string,\n\t\tMMR_ID as long,\n\t\tACTIVITY_STATUS_ID as integer,\n\t\tBRE_RESPONSE_ID as long,\n\t\tLEPD_ID as long,\n\t\tFEFD_ID as long,\n\t\tPREV_ACTIVITY_ID as long,\n\t\tPROCESS_TYPE_ID as integer,\n\t\tMPWR_ID as long,\n\t\tLETTER_CODE as string,\n\t\tDENIAL_REASON as string,\n\t\tTRANSACTION_ID as long,\n\t\tSEQUENCE as integer,\n\t\tLETTER_QUEUE_ID as long,\n\t\tLIS_HIST_ID as long,\n\t\tATTESTATION_ID as long,\n\t\tTASK_DESC as string,\n\t\tADD_TO_REPORT_Y_N as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tACTIVITY_TYPE_ID,\n\t\tCREATED_ON,\n\t\tCREATED_BY,\n\t\tWORK_QUEUE_ID,\n\t\tAPPLICATION_ID = application_id,\n\t\tDUE_DATE,\n\t\tFILE_ID = File_id,\n\t\tACTIVITY_OUTCOME_ID,\n\t\tACTIVITY_STATUS_ID,\n\t\tTASK_DESC = Error_Message\n\t)) ~> sinkActivity"
+		}
+	}
+}

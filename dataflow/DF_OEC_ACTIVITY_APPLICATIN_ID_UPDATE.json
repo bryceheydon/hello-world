@@ -1,0 +1,58 @@
+{
+	"name": "DF_OEC_ACTIVITY_APPLICATIN_ID_UPDATE",
+	"properties": {
+		"folder": {
+			"name": "OEC"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_EAAS_TX_ACTIVITY",
+						"type": "DatasetReference"
+					},
+					"name": "TxActivity"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_EAAS_TX_APPLICATION",
+						"type": "DatasetReference"
+					},
+					"name": "TxApplication"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_EAAS_TX_ACTIVITY",
+						"type": "DatasetReference"
+					},
+					"name": "Activity"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_EAAS_TX_ACTIVITY",
+						"type": "DatasetReference"
+					},
+					"name": "TxActvityUpdate"
+				}
+			],
+			"transformations": [
+				{
+					"name": "RenameColumns"
+				},
+				{
+					"name": "JoinApplication"
+				},
+				{
+					"name": "AlterRowActivityApplicationId"
+				},
+				{
+					"name": "JoinActivity"
+				}
+			],
+			"script": "parameters{\n\tOecFileName as string (\"FBHP_Eaas_Export_SIT_First2_test.txt\")\n}\nsource(output(\n\t\told_application_id as long,\n\t\tMBI as string,\n\t\tPlan_id as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select old_application_id ,app.MBI,app.Plan_id from\\n\\n(select distinct application_id as old_application_id  from [dbo].[TX_ACTIVITY] )  act  \\n\\n left join [dbo].[TX_APPLICATION] app  on act.old_application_id  = app.application_id  ',\n\tformat: 'query') ~> TxActivity\nsource(output(\n\t\tAPPLICATION_ID as long,\n\t\tMBI as string,\n\t\tPLAN_ID as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'select max(application_id) as APPLICATION_ID, MBI, PLAN_ID from dbo.TX_APPLICATION group by MBI,PLAN_ID',\n\tformat: 'query') ~> TxApplication\nsource(output(\n\t\tACTIVITY_ID as long,\n\t\tAPPLICATION_ID as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'SELECT ACTIVITY_ID, APPLICATION_ID FROM dbo.TX_ACTIVITY',\n\tformat: 'query') ~> Activity\nTxActivity select(mapColumn(\n\t\tOLD_APPLICATION_ID = old_application_id,\n\t\tMBI_SRC = MBI,\n\t\tPLAN_ID_SRC = Plan_id\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> RenameColumns\nRenameColumns, TxApplication join(trim(MBI_SRC) == trim(MBI)\n\t&& trim(PLAN_ID_SRC) == trim(PLAN_ID),\n\tjoinType:'inner',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinApplication\nJoinActivity alterRow(updateIf(true())) ~> AlterRowActivityApplicationId\nJoinApplication, Activity join(OLD_APPLICATION_ID == Activity@APPLICATION_ID,\n\tjoinType:'inner',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinActivity\nAlterRowActivityApplicationId sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tACTIVITY_ID as long,\n\t\tACTIVITY_TYPE_ID as integer,\n\t\tCREATED_ON as timestamp,\n\t\tCREATED_BY as long,\n\t\tWORK_QUEUE_ID as long,\n\t\tASSIGNED_TO as long,\n\t\tASSIGNED_BY as long,\n\t\tAPPLICATION_ID as long,\n\t\tRECORD_FAILURE_ID as long,\n\t\tBEQ_REQUEST_ID as long,\n\t\tACCEPTED_ON as timestamp,\n\t\tBEQ_RESPONSE_ID as long,\n\t\tBRE_LETTER_REQUEST_ID as long,\n\t\tPERFORMED_BY as long,\n\t\tCOMPLETED_ON as timestamp,\n\t\tDUE_DATE as timestamp,\n\t\tTX_DTRR_RESPONSE_ID as long,\n\t\tFILE_ID as long,\n\t\tTX_834_ID as long,\n\t\tACTIVITY_OUTCOME_ID as integer,\n\t\tTRANSACTION_CODE as string,\n\t\tTX_MARX_REQUEST_ID as long,\n\t\tINSERT_DATETIME as timestamp,\n\t\tUID as string,\n\t\tMMR_ID as long,\n\t\tACTIVITY_STATUS_ID as integer,\n\t\tBRE_RESPONSE_ID as long,\n\t\tLEPD_ID as long,\n\t\tFEFD_ID as long,\n\t\tPREV_ACTIVITY_ID as long,\n\t\tPROCESS_TYPE_ID as integer,\n\t\tMPWR_ID as long,\n\t\tLETTER_CODE as string,\n\t\tDENIAL_REASON as string,\n\t\tTRANSACTION_ID as long,\n\t\tSEQUENCE as integer,\n\t\tLETTER_QUEUE_ID as long,\n\t\tLIS_HIST_ID as long,\n\t\tATTESTATION_ID as long,\n\t\tTASK_DESC as string,\n\t\tADD_TO_REPORT_Y_N as string\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['ACTIVITY_ID'],\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tACTIVITY_ID,\n\t\tAPPLICATION_ID = TxApplication@APPLICATION_ID\n\t)) ~> TxActvityUpdate"
+		}
+	}
+}

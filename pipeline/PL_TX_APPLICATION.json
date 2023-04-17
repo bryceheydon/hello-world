@@ -1,0 +1,1090 @@
+{
+	"name": "PL_TX_APPLICATION",
+	"properties": {
+		"activities": [
+			{
+				"name": "GetFileNames",
+				"description": "This will get the new file names",
+				"type": "GetMetadata",
+				"dependsOn": [
+					{
+						"activity": "Wait1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "DS_EAAS_BLOG_STORAGE",
+						"type": "DatasetReference",
+						"parameters": {
+							"Container": {
+								"value": "@pipeline().parameters.BlobContainer",
+								"type": "Expression"
+							},
+							"FilePath": {
+								"value": "@pipeline().parameters.BlobLanding",
+								"type": "Expression"
+							},
+							"FileString": {
+								"value": "@pipeline().parameters.FileString",
+								"type": "Expression"
+							}
+						}
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "ForEachFile",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "FilterDefaultBlobFile",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('FilterDefaultBlobFile').output.Value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "FileLookup",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "select FILE_ID from dbo.TX_FILE where trim(FILE_NAME)='@{item().name}'",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "DS_EAAS_TX_FILE",
+									"type": "DatasetReference"
+								},
+								"firstRowOnly": false
+							}
+						},
+						{
+							"name": "If FileExists",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "FileLookup",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@equals(activity('FileLookup').output.count,0)",
+									"type": "Expression"
+								},
+								"ifTrueActivities": [
+									{
+										"name": "LandingToProcessing",
+										"type": "Copy",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "DelimitedTextSource",
+												"storeSettings": {
+													"type": "AzureBlobStorageReadSettings",
+													"recursive": true,
+													"enablePartitionDiscovery": false
+												},
+												"formatSettings": {
+													"type": "DelimitedTextReadSettings"
+												}
+											},
+											"sink": {
+												"type": "DelimitedTextSink",
+												"storeSettings": {
+													"type": "AzureBlobStorageWriteSettings"
+												},
+												"formatSettings": {
+													"type": "DelimitedTextWriteSettings",
+													"quoteAllText": true,
+													"fileExtension": ".txt"
+												}
+											},
+											"enableStaging": false,
+											"translator": {
+												"value": "@item().name",
+												"type": "Expression"
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "DS_EAAS_BLOG_STORAGE_OEC",
+												"type": "DatasetReference",
+												"parameters": {
+													"Container": {
+														"value": "@pipeline().parameters.BlobContainer",
+														"type": "Expression"
+													},
+													"FilePath": {
+														"value": "@pipeline().parameters.BlobLanding",
+														"type": "Expression"
+													},
+													"FileString": {
+														"value": "@item().name",
+														"type": "Expression"
+													}
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "DS_EAAS_BLOG_STORAGE",
+												"type": "DatasetReference",
+												"parameters": {
+													"Container": {
+														"value": "@pipeline().parameters.BlobContainer",
+														"type": "Expression"
+													},
+													"FilePath": {
+														"value": "@pipeline().parameters.BlobProcessing",
+														"type": "Expression"
+													},
+													"FileString": {
+														"value": "@item().name",
+														"type": "Expression"
+													}
+												}
+											}
+										]
+									},
+									{
+										"name": "DF_OEC_FILE_PROCESSING",
+										"type": "ExecuteDataFlow",
+										"dependsOn": [
+											{
+												"activity": "LandingToProcessing",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataflow": {
+												"referenceName": "DF_OEC_TX_FILE",
+												"type": "DataFlowReference",
+												"parameters": {
+													"OutFileNm": {
+														"value": "'@{item().name}'",
+														"type": "Expression"
+													},
+													"BlobContainer": {
+														"value": "'@{pipeline().parameters.BlobContainer}'",
+														"type": "Expression"
+													},
+													"BlobProcessing": {
+														"value": "'@{pipeline().parameters.BlobProcessing}'",
+														"type": "Expression"
+													},
+													"BlobProcessingTemp": {
+														"value": "'@{pipeline().parameters.BlobProcessingTemp}'",
+														"type": "Expression"
+													},
+													"Client": {
+														"value": "'@{pipeline().parameters.Client}'",
+														"type": "Expression"
+													},
+													"SrcSystem": {
+														"value": "'@{pipeline().parameters.SrcSystem}'",
+														"type": "Expression"
+													},
+													"TgtSystem": {
+														"value": "'@{pipeline().parameters.TgtSystem}'",
+														"type": "Expression"
+													},
+													"FileCount": "0"
+												}
+											},
+											"integrationRuntime": {
+												"referenceName": "EAAS-ADF-IR",
+												"type": "IntegrationRuntimeReference"
+											},
+											"traceLevel": "Fine"
+										}
+									},
+									{
+										"name": "DF_FILE_LOAD_FAILURE_TX_ACTIVITY",
+										"type": "ExecuteDataFlow",
+										"dependsOn": [
+											{
+												"activity": "DF_OEC_TX_APPLICATION",
+												"dependencyConditions": [
+													"Failed"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataflow": {
+												"referenceName": "DF_FILE_LOAD_FAILURE_TX_ACTIVITY",
+												"type": "DataFlowReference",
+												"parameters": {
+													"FileName": {
+														"value": "'@{item().name}'",
+														"type": "Expression"
+													},
+													"ActivityTypeName": "\"OEC File Failed to Load\"",
+													"WorkQueueName": "\"OEC File Load Failure\""
+												}
+											},
+											"integrationRuntime": {
+												"referenceName": "EAAS-ADF-IR",
+												"type": "IntegrationRuntimeReference"
+											},
+											"traceLevel": "Fine"
+										}
+									},
+									{
+										"name": "DF_FILE_RECEIVED_SEND_TX_ACTIVITY",
+										"type": "ExecuteDataFlow",
+										"dependsOn": [
+											{
+												"activity": "DF_OEC_FILE_PROCESSING",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataflow": {
+												"referenceName": "DF_FILE_RECEIVED_SEND_TX_ACTIVITY",
+												"type": "DataFlowReference",
+												"parameters": {
+													"FileName": {
+														"value": "'@{item().name}'",
+														"type": "Expression"
+													},
+													"ActivityTypeName": "\"OEC File Received\""
+												}
+											},
+											"integrationRuntime": {
+												"referenceName": "EAAS-ADF-IR",
+												"type": "IntegrationRuntimeReference"
+											},
+											"traceLevel": "Fine"
+										}
+									},
+									{
+										"name": "DF_APPLICATION_TX_ACTIVITY",
+										"type": "ExecuteDataFlow",
+										"dependsOn": [
+											{
+												"activity": "DF_OEC_GOLD_MEMBER_TRANSACTION_LOAD",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataflow": {
+												"referenceName": "DF_OEC_APPLICATION_TX_ACTIVITY",
+												"type": "DataFlowReference",
+												"parameters": {
+													"FileName": {
+														"value": "'@{item().name}'",
+														"type": "Expression"
+													},
+													"ActivityTypeName": "\"OEC File Received\"",
+													"BlobContainer": "\"eaas-container\"",
+													"BlobProcessingTemp": "\"oec/processing/temp\""
+												}
+											},
+											"integrationRuntime": {
+												"referenceName": "EAAS-ADF-IR",
+												"type": "IntegrationRuntimeReference"
+											},
+											"traceLevel": "Fine"
+										}
+									},
+									{
+										"name": "DF_OEC_ERROR_FILE_LOAD",
+										"type": "ExecuteDataFlow",
+										"dependsOn": [
+											{
+												"activity": "DF_OEC_TX_APPLICATION",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataflow": {
+												"referenceName": "DF_OEC_ERROR_FILE_LOAD",
+												"type": "DataFlowReference",
+												"parameters": {
+													"FileName": {
+														"value": "'@{item().name}'",
+														"type": "Expression"
+													}
+												}
+											},
+											"integrationRuntime": {
+												"referenceName": "EAAS-ADF-IR",
+												"type": "IntegrationRuntimeReference"
+											},
+											"traceLevel": "Fine"
+										}
+									},
+									{
+										"name": "DF_OEC_ACK_FILE",
+										"type": "ExecuteDataFlow",
+										"dependsOn": [
+											{
+												"activity": "DF_APPLICATION_TX_ACTIVITY",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataflow": {
+												"referenceName": "DF_OEC_ACK_FILE",
+												"type": "DataFlowReference",
+												"parameters": {
+													"BlobContainer": {
+														"value": "'@{pipeline().parameters.BlobContainer}'",
+														"type": "Expression"
+													},
+													"BlobReject": {
+														"value": "'@{pipeline().parameters.BlobReject}'",
+														"type": "Expression"
+													},
+													"OecFIleName": {
+														"value": "'@{item().name}'",
+														"type": "Expression"
+													},
+													"BlobOutput": {
+														"value": "'@{pipeline().parameters.BlobOutput}'",
+														"type": "Expression"
+													},
+													"ack": {
+														"value": "'@{pipeline().parameters.BlobAck}'",
+														"type": "Expression"
+													},
+													"BlobProcessingTemp": {
+														"value": "'@{pipeline().parameters.BlobProcessingTemp}'",
+														"type": "Expression"
+													}
+												}
+											},
+											"integrationRuntime": {
+												"referenceName": "EAAS-ADF-IR",
+												"type": "IntegrationRuntimeReference"
+											},
+											"traceLevel": "Fine"
+										}
+									},
+									{
+										"name": "DF_OEC_GOLD_MEMBER_TRANSACTION_LOAD",
+										"type": "ExecuteDataFlow",
+										"dependsOn": [
+											{
+												"activity": "DF_OEC_GOLD_MEMBER_INSERT",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataflow": {
+												"referenceName": "DF_OEC_GOLD_MEMBER_TRANSACTION_LOAD",
+												"type": "DataFlowReference",
+												"parameters": {
+													"OecFileName": {
+														"value": "'@{item().name}'",
+														"type": "Expression"
+													}
+												}
+											},
+											"integrationRuntime": {
+												"referenceName": "EAAS-ADF-IR",
+												"type": "IntegrationRuntimeReference"
+											},
+											"traceLevel": "Fine"
+										}
+									},
+									{
+										"name": "DF_OEC_SEP_REASON_CODE",
+										"type": "ExecuteDataFlow",
+										"dependsOn": [
+											{
+												"activity": "DF_OEC_ACK_FILE",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "1.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataflow": {
+												"referenceName": "DF_OEC_SEP_REASON_CODE",
+												"type": "DataFlowReference",
+												"parameters": {
+													"FileName": {
+														"value": "'@{item().name}'",
+														"type": "Expression"
+													}
+												}
+											},
+											"integrationRuntime": {
+												"referenceName": "EAAS-ADF-IR",
+												"type": "IntegrationRuntimeReference"
+											},
+											"traceLevel": "Fine"
+										}
+									},
+									{
+										"name": "DF_OEC_TX_APPLICATION",
+										"type": "ExecuteDataFlow",
+										"dependsOn": [
+											{
+												"activity": "DF_OEC_FILE_PROCESSING",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "1.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataflow": {
+												"referenceName": "DF_OEC_TX_APPLICATION",
+												"type": "DataFlowReference",
+												"parameters": {
+													"OecFileName": {
+														"value": "'@{item().name}'",
+														"type": "Expression"
+													},
+													"BlobContainer": {
+														"value": "'@{pipeline().parameters.BlobContainer}'",
+														"type": "Expression"
+													},
+													"BlobProcessingTemp": {
+														"value": "'@{pipeline().parameters.BlobProcessingTemp}'",
+														"type": "Expression"
+													},
+													"BlobReject": {
+														"value": "'@{pipeline().parameters.BlobReject}'",
+														"type": "Expression"
+													},
+													"Client": {
+														"value": "'@{pipeline().parameters.Client}'",
+														"type": "Expression"
+													}
+												}
+											},
+											"integrationRuntime": {
+												"referenceName": "EAAS-ADF-IR",
+												"type": "IntegrationRuntimeReference"
+											},
+											"traceLevel": "Fine"
+										}
+									},
+									{
+										"name": "DF_OEC_GOLD_MEMBER_INSERT",
+										"type": "ExecuteDataFlow",
+										"dependsOn": [
+											{
+												"activity": "DF_OEC_GOLD_MEMBER_MBR_MATCH",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "1.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataflow": {
+												"referenceName": "DF_OEC_GOLD_MEMBER_INSERT",
+												"type": "DataFlowReference",
+												"parameters": {
+													"OecFileName": {
+														"value": "'@{item().name}'",
+														"type": "Expression"
+													},
+													"BlobContainer": "\"eaas-container\"",
+													"BlobProcessingTemp": "\"oec/processing/temp\""
+												}
+											},
+											"integrationRuntime": {
+												"referenceName": "EAAS-ADF-IR",
+												"type": "IntegrationRuntimeReference"
+											},
+											"traceLevel": "Fine"
+										}
+									},
+									{
+										"name": "DF_OEC_GOLD_MEMBER_MBR_MATCH",
+										"type": "ExecuteDataFlow",
+										"dependsOn": [
+											{
+												"activity": "DF_OEC_ERROR_FILE_LOAD",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "1.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataflow": {
+												"referenceName": "DF_OEC_GOLD_MEMBER_MBR_MATCH",
+												"type": "DataFlowReference",
+												"parameters": {
+													"OecFileName": {
+														"value": "'@{item().name}'",
+														"type": "Expression"
+													}
+												}
+											},
+											"integrationRuntime": {
+												"referenceName": "EAAS-ADF-IR",
+												"type": "IntegrationRuntimeReference"
+											},
+											"traceLevel": "Fine"
+										}
+									},
+									{
+										"name": "DeleteManualBlobFile",
+										"type": "Delete",
+										"dependsOn": [
+											{
+												"activity": "CopyBlobFile_Archive",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataset": {
+												"referenceName": "DS_EAAS_BLOG_STORAGE",
+												"type": "DatasetReference",
+												"parameters": {
+													"Container": {
+														"value": "@pipeline().parameters.BlobContainer",
+														"type": "Expression"
+													},
+													"FilePath": {
+														"value": "@pipeline().parameters.BlobLanding",
+														"type": "Expression"
+													},
+													"FileString": {
+														"value": "@item().name",
+														"type": "Expression"
+													}
+												}
+											},
+											"enableLogging": false,
+											"storeSettings": {
+												"type": "AzureBlobStorageReadSettings",
+												"recursive": true,
+												"enablePartitionDiscovery": false
+											}
+										}
+									},
+									{
+										"name": "CopyBlobFile_Archive",
+										"type": "Copy",
+										"dependsOn": [
+											{
+												"activity": "DF_OEC_TX_APPLICATION",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "DelimitedTextSource",
+												"storeSettings": {
+													"type": "AzureBlobStorageReadSettings",
+													"recursive": true,
+													"enablePartitionDiscovery": false
+												},
+												"formatSettings": {
+													"type": "DelimitedTextReadSettings"
+												}
+											},
+											"sink": {
+												"type": "DelimitedTextSink",
+												"storeSettings": {
+													"type": "AzureBlobStorageWriteSettings"
+												},
+												"formatSettings": {
+													"type": "DelimitedTextWriteSettings",
+													"quoteAllText": true,
+													"fileExtension": ""
+												}
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"typeConversion": true,
+												"typeConversionSettings": {
+													"allowDataTruncation": true,
+													"treatBooleanAsNumber": false
+												}
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "DS_EAAS_BLOG_STORAGE",
+												"type": "DatasetReference",
+												"parameters": {
+													"Container": {
+														"value": "@pipeline().parameters.BlobContainer",
+														"type": "Expression"
+													},
+													"FilePath": {
+														"value": "@pipeline().parameters.BlobLanding",
+														"type": "Expression"
+													},
+													"FileString": {
+														"value": "@item().name",
+														"type": "Expression"
+													}
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "DS_EAAS_BLOG_STORAGE",
+												"type": "DatasetReference",
+												"parameters": {
+													"Container": {
+														"value": "@pipeline().parameters.BlobContainer",
+														"type": "Expression"
+													},
+													"FilePath": {
+														"value": "@pipeline().parameters.BlobArchive",
+														"type": "Expression"
+													},
+													"FileString": {
+														"value": "@item().name",
+														"type": "Expression"
+													}
+												}
+											}
+										]
+									},
+									{
+										"name": "DF_OEC_ACTIVITY_APPLICATIN_ID_UPDATE",
+										"type": "ExecuteDataFlow",
+										"dependsOn": [
+											{
+												"activity": "DF_OEC_GOLD_MEMBER_MBR_MATCH",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "1.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataflow": {
+												"referenceName": "DF_OEC_ACTIVITY_APPLICATIN_ID_UPDATE",
+												"type": "DataFlowReference",
+												"parameters": {
+													"OecFileName": {
+														"value": "'@{item().name}'",
+														"type": "Expression"
+													}
+												}
+											},
+											"integrationRuntime": {
+												"referenceName": "EAAS-ADF-IR",
+												"type": "IntegrationRuntimeReference"
+											},
+											"traceLevel": "Fine"
+										}
+									},
+									{
+										"name": "DF_SEP_REASON_TX_ACTIVITY",
+										"type": "ExecuteDataFlow",
+										"dependsOn": [
+											{
+												"activity": "DF_OEC_SEP_REASON_CODE",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "1.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataflow": {
+												"referenceName": "DF_SEP_REASON_TX_ACTIVITY",
+												"type": "DataFlowReference",
+												"parameters": {
+													"FileName": {
+														"value": "'@{item().name}'",
+														"type": "Expression"
+													},
+													"ActivityTypeName": "\"OEC File Received\"",
+													"BlobContainer": {
+														"value": "'@{pipeline().parameters.BlobContainer}'",
+														"type": "Expression"
+													},
+													"BlobProcessingTemp": {
+														"value": "'@{pipeline().parameters.BlobProcessingTemp}'",
+														"type": "Expression"
+													}
+												}
+											},
+											"integrationRuntime": {
+												"referenceName": "EAAS-ADF-IR",
+												"type": "IntegrationRuntimeReference"
+											},
+											"traceLevel": "Fine"
+										}
+									},
+									{
+										"name": "DeleteProcessingBlobFile",
+										"type": "Delete",
+										"dependsOn": [
+											{
+												"activity": "CopyBlobFile_Archive",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataset": {
+												"referenceName": "DS_EAAS_BLOG_STORAGE",
+												"type": "DatasetReference",
+												"parameters": {
+													"Container": {
+														"value": "@pipeline().parameters.BlobContainer",
+														"type": "Expression"
+													},
+													"FilePath": {
+														"value": "@pipeline().parameters.BlobProcessing",
+														"type": "Expression"
+													},
+													"FileString": {
+														"value": "@item().name",
+														"type": "Expression"
+													}
+												}
+											},
+											"enableLogging": false,
+											"storeSettings": {
+												"type": "AzureBlobStorageReadSettings",
+												"recursive": true,
+												"enablePartitionDiscovery": false
+											}
+										}
+									},
+									{
+										"name": "DF_GOLD_EVENT_TABLE_LOAD",
+										"type": "ExecuteDataFlow",
+										"dependsOn": [
+											{
+												"activity": "DF_OEC_GOLD_MEMBER_INSERT",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "1.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataflow": {
+												"referenceName": "DF_GOLD_EVENT_TABLE_LOAD",
+												"type": "DataFlowReference",
+												"parameters": {
+													"FileName": {
+														"value": "'@{item().name}'",
+														"type": "Expression"
+													},
+													"BlobContainer": {
+														"value": "'@{pipeline().parameters.BlobContainer}'",
+														"type": "Expression"
+													},
+													"BlobProcessingTemp": {
+														"value": "'@{pipeline().parameters.BlobProcessingTemp}'",
+														"type": "Expression"
+													}
+												}
+											},
+											"integrationRuntime": {
+												"referenceName": "EAAS-ADF-IR",
+												"type": "IntegrationRuntimeReference"
+											},
+											"traceLevel": "Fine"
+										}
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "FilterDefaultBlobFile",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "GetFileNames",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GetFileNames').output.childItems",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@not(startswith(item().name,'dummy'))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Wait1",
+				"type": "Wait",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"waitTimeInSeconds": 1
+				}
+			}
+		],
+		"parameters": {
+			"BlobContainer": {
+				"type": "string",
+				"defaultValue": "eaas-container"
+			},
+			"BlobLanding": {
+				"type": "string",
+				"defaultValue": "oec/landing"
+			},
+			"BlobProcessing": {
+				"type": "string",
+				"defaultValue": "oec/processing"
+			},
+			"FileString": {
+				"type": "string"
+			},
+			"BlobReject": {
+				"type": "string",
+				"defaultValue": "oec/reject"
+			},
+			"BlobProcessingTemp": {
+				"type": "string",
+				"defaultValue": "oec/processing/temp"
+			},
+			"BlobOutput": {
+				"type": "string",
+				"defaultValue": "oec/output"
+			},
+			"SFTPOutbound": {
+				"type": "string",
+				"defaultValue": "SFTP_Stage/SIT/OutBound_From_EaaS/FBHP/OEC"
+			},
+			"Client": {
+				"type": "string",
+				"defaultValue": "Members Health Insurance Company"
+			},
+			"SrcSystem": {
+				"type": "string",
+				"defaultValue": "CMS"
+			},
+			"TgtSystem": {
+				"type": "string",
+				"defaultValue": "EaaS"
+			},
+			"BlobAck": {
+				"type": "string",
+				"defaultValue": "oec/ack"
+			},
+			"BlobArchive": {
+				"type": "string",
+				"defaultValue": "oec/archive"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-05-16T07:34:23Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
