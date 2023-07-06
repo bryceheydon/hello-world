@@ -1,0 +1,12 @@
+{
+	"name": "brhcleandatafactory",
+	"properties": {
+		"globalParameters": {
+			"testglobal": {
+				"type": "string",
+				"value": "fda"
+			}
+		}
+	},
+	"location": "westus2"
+}
