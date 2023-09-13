@@ -1,0 +1,53 @@
+{
+	"name": "ds_Op_Server_Pampa_csv_delimited",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "FileServer_Pampa",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"par_FileName": {
+				"type": "string"
+			},
+			"par_Delimiter": {
+				"type": "String"
+			},
+			"par_Header": {
+				"type": "bool"
+			},
+			"par_Folder": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "Op"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "FileServerLocation",
+				"fileName": {
+					"value": "@dataset().par_FileName",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().par_Folder",
+					"type": "Expression"
+				}
+			},
+			"columnDelimiter": {
+				"value": "@dataset().par_Delimiter",
+				"type": "Expression"
+			},
+			"escapeChar": "\\",
+			"firstRowAsHeader": {
+				"value": "@dataset().par_Header",
+				"type": "Expression"
+			},
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

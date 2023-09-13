@@ -1,0 +1,60 @@
+{
+	"name": "ds_Raw_csv_delimited",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLake",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"par_Folder": {
+				"type": "string"
+			},
+			"par_FileName": {
+				"type": "string"
+			},
+			"par_Delimiter": {
+				"type": "string"
+			},
+			"par_Header": {
+				"type": "bool"
+			}
+		},
+		"folder": {
+			"name": "Raw"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().par_FileName",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().par_Folder",
+					"type": "Expression"
+				},
+				"fileSystem": "raw"
+			},
+			"columnDelimiter": {
+				"value": "@dataset().par_Delimiter",
+				"type": "Expression"
+			},
+			"compressionCodec": "gzip",
+			"compressionLevel": "Optimal",
+			"escapeChar": "",
+			"firstRowAsHeader": {
+				"value": "@dataset().par_Header",
+				"type": "Expression"
+			},
+			"quoteChar": ""
+		},
+		"schema": [
+			{
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

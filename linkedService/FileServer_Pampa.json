@@ -1,0 +1,23 @@
+{
+	"name": "FileServer_Pampa",
+	"properties": {
+		"annotations": [],
+		"type": "FileServer",
+		"typeProperties": {
+			"host": "\\\\180.204.117.205\\Azure_FileServer\\One-Fcc\\pampauy",
+			"userId": "YALTURUGUAY\\urprazurefileserver",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "AzureKeyVault_DataLake",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "usuario-File"
+			}
+		},
+		"connectVia": {
+			"referenceName": "ir-uyasir01",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

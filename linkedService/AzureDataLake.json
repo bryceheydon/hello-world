@@ -1,0 +1,22 @@
+{
+	"name": "AzureDataLake",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://urgd1zu2stadatalkcrit002.dfs.core.windows.net",
+			"accountKey": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "AzureKeyVault_DataLake",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "key-storageAccount-DataLake"
+			}
+		},
+		"connectVia": {
+			"referenceName": "managedVnet2",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

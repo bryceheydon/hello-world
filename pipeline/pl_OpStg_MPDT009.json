@@ -1,0 +1,294 @@
+{
+	"name": "pl_OpStg_MPDT009",
+	"properties": {
+		"activities": [
+			{
+				"name": "copy_OpRaw_MPDT009",
+				"description": "Proceso copia de datos de Onpremise a capa Raw",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "set_var_Fecha",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "FileServerReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"enableSkipIncompatibleRow": true,
+					"logSettings": {
+						"enableCopyActivityLog": true,
+						"copyActivityLogSettings": {
+							"logLevel": "Warning",
+							"enableReliableLogging": false
+						},
+						"logLocationSettings": {
+							"linkedServiceName": {
+								"referenceName": "AzureDataLake",
+								"type": "LinkedServiceReference"
+							},
+							"path": {
+								"value": "@concat('raw/pampa/mpdt009/',substring(variables('var_Fecha'),0,4),'/',substring(variables('var_Fecha'),4,2),'/skipRawLog')",
+								"type": "Expression"
+							}
+						}
+					},
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"sink": {
+									"ordinal": 1
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_Op_Server_Pampa_csv_delimited",
+						"type": "DatasetReference",
+						"parameters": {
+							"par_FileName": {
+								"value": "@pipeline().parameters.par_FileNameChild",
+								"type": "Expression"
+							},
+							"par_Delimiter": ";",
+							"par_Header": false,
+							"par_Folder": "reportes"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_Raw_csv_delimited",
+						"type": "DatasetReference",
+						"parameters": {
+							"par_Folder": {
+								"value": "@concat('pampa/mpdt009/',substring(variables('var_Fecha'),0,4),'/',substring(variables('var_Fecha'),4,2))",
+								"type": "Expression"
+							},
+							"par_FileName": {
+								"value": "@concat(pipeline().parameters.par_FileNameChild,'.gz')",
+								"type": "Expression"
+							},
+							"par_Delimiter": ";",
+							"par_Header": false
+						}
+					}
+				]
+			},
+			{
+				"name": "set_var_Fecha",
+				"description": "Obtiene el nombre del archivo que se envió desde el pl_OpStg_Master y extrae la fecha",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "var_Fecha",
+					"value": {
+						"value": "@concat('20',substring(pipeline().parameters.par_FileNameChild,16,6))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "copy_Catch_Skipped_Rows",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "copy_OpRaw_MPDT009",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": {
+								"value": "@activity('copy_OpRaw_MPDT009').output.logFilePath\n\n",
+								"type": "Expression"
+							},
+							"wildcardFileName": "*",
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings",
+							"skipLineCount": 1
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"enableSkipIncompatibleRow": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"sink": {
+									"ordinal": 1
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_Raw_Rejected",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_Raw_csv_delimited",
+						"type": "DatasetReference",
+						"parameters": {
+							"par_Folder": {
+								"value": "@concat('pampa/mpdt009/',substring(variables('var_Fecha'),0,4),'/',substring(variables('var_Fecha'),4,2))",
+								"type": "Expression"
+							},
+							"par_FileName": {
+								"value": "@concat(substring(pipeline().parameters.par_FileNameChild,0,22),'_Skipped.txt.gz')",
+								"type": "Expression"
+							},
+							"par_Delimiter": "|",
+							"par_Header": true
+						}
+					}
+				]
+			},
+			{
+				"name": "Delete1",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "copy_Catch_Skipped_Rows",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ds_Raw_csv_delimited",
+						"type": "DatasetReference",
+						"parameters": {
+							"par_Folder": {
+								"value": "@concat('pampa/mpdt009/',substring(variables('var_Fecha'),0,4),'/',substring(variables('var_Fecha'),4,2),'/skipRawLog')",
+								"type": "Expression"
+							},
+							"par_FileName": {
+								"value": "@string(null)",
+								"type": "Expression"
+							},
+							"par_Delimiter": ";",
+							"par_Header": false
+						}
+					},
+					"enableLogging": false,
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			}
+		],
+		"parameters": {
+			"par_FileNameChild": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"var_FileName": {
+				"type": "String"
+			},
+			"var_Fecha": {
+				"type": "String"
+			},
+			"var": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "Op_to_Stg/pampa"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-01-26T13:42:20Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

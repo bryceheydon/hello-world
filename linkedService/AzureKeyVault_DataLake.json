@@ -1,0 +1,11 @@
+{
+	"name": "AzureKeyVault_DataLake",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://urgd1zu2akvdatalkcrit001.vault.azure.net/"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/linkedservices"
+}
